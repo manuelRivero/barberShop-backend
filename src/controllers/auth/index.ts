@@ -47,24 +47,7 @@ import { NextFunction, Request, Response } from "express";
 //         lastName,
 //         email,
 //       });
-//       const targetSlugCount = await User.find({slug:`${name}-${lastName}`}).count()
-//       console.log("targetSlugCount", targetSlugCount)
-//       if(targetSlugCount > 0){
-//         newUser.slug = `${name.split(" ").join("-")}-${lastName.split(" ").join("-")}.${targetSlugCount + 1}`
-//       }else{
-//         newUser.slug = `${name.split(" ").join("-")}-${lastName.split(" ").join("-")}`
-//       }
-//       if (files && files.image) {
-//         try {
-//           const imageUrl = await cloudinary.uploader.upload(
-//             files.image.tempFilePath,
-//             { folder: "users" }
-//           );
-//           newUser.avatar = imageUrl.secure_url;
-//         } catch {}
-//       } else {
-//         newUser.avatar = null;
-//       }
+
 //       newUser.password = bcript.hashSync(password, salt);
 //       await newUser.save();
 //       res.json({
@@ -123,5 +106,43 @@ export const me = {
     console.log("target user", targetUser);
 
     res.json({ data: targetUser });
+  },
+};
+
+export const facebookLogin = {
+  do: async (req: Request, res: Response) => {
+    const { access_token } = req.body;
+    console.log("access_token", access_token);
+    const data = await fetch(
+      `https://graph.facebook.com/me?access_token=${req.body.access_token}&fields=email,first_name,last_name`
+    );
+    const { email, last_name, first_name } = await data.json();
+
+    const targetUser = await User.findOne({ email });
+    if (!targetUser) {
+      // register user
+      console.log("register case");
+
+      try {
+        const newUser = new User({
+          name: first_name,
+          lastName: last_name,
+          email,
+          role:'user'
+        });
+        await newUser.save();
+        const token = await generatejWT(newUser._id.toString());
+        res.status(200).json({
+          ok: true,
+          token,
+        });
+      } catch (error) {}
+      return;
+    }
+    const token = await generatejWT(targetUser.id);
+    res.status(200).json({
+      ok: true,
+      token,
+    });
   },
 };
