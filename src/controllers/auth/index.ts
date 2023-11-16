@@ -75,7 +75,9 @@ export const login = {
   do: async (req: Request, res: Response, next: NextFunction) => {
     console.log("login");
     const { email, password } = req.body;
+    console.log("email", email, "password", password)
     const targetUser = await User.findOne({ email });
+    console.log("Target user", targetUser)
     if (!targetUser) {
       return res.status(404).json({
         ok: false,
@@ -101,8 +103,8 @@ export const login = {
 export const me = {
   do: async (req: Request, res: Response) => {
     const { uid } = req;
-
-    const targetUser = await User.findById(uid).select(" -password");
+    console.log("uid", uid)
+    const targetUser = await User.findById(new mongoose.Types.ObjectId(uid)).select(" -password");
     console.log("target user", targetUser);
 
     res.json({ data: targetUser });

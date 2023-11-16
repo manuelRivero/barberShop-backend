@@ -13,6 +13,9 @@ const Turn = new Schema(
     },
     price:{
       type:Number
+    },
+    name:{
+      type:String
     }
   },
   {

@@ -20,7 +20,7 @@ const User = new Schema(
     role: {
       type: String,
       default: "user",
-    },
+    },  
     bio:{
       type:String,
       defaul: null

@@ -60,3 +60,20 @@ export const getServices = {
   },
 };
 
+export const getBarberServices = {
+  do: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { page = "0" } = req.query;
+    const pageSize: number = 10;
+    const parsedPage = parseInt(page ? (page as string) : "0");
+
+    const services = await Service.find({ barber: new mongoose.Types.ObjectId(id) })
+      .skip(parsedPage * pageSize)
+      .limit(pageSize);
+    res.json({
+      ok: true,
+      services,
+    });
+  },
+};
+
