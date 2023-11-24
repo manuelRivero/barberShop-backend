@@ -16,8 +16,8 @@ export const setTurns = {
       const turn = new Turn({
         name,
         price,
-        startDate,
-        endDate,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
         type,
         user: role === "user" ? uid : null,
         barber,
