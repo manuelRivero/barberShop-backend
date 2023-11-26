@@ -1,18 +1,21 @@
-import express, { Express, Request, Response , Application } from 'express';
+import express, { Application } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
 import http from "http";
 import { dbConnection } from "./db/index";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth/index"
-import turnsRoutes from "./routes/turns/index"
-import servicesRoutes from "./routes/services/index"
+import authRoutes from "./routes/auth/index";
+import turnsRoutes from "./routes/turns/index";
+import servicesRoutes from "./routes/services/index";
+
 
 import { errorHandler } from "./middleware/errorHandler/error-handler";
 import cookieParser from "cookie-parser";
+import { io, ioEvents } from "./socket";
 
-const app:Application = express();
+
+const app: Application = express();
 
 dotenv.config();
 const corsOptions = {
@@ -34,16 +37,14 @@ app.use(
 );
 app.use(cookieParser());
 
- app.use("/api/auth", authRoutes);
- app.use("/api/turns", turnsRoutes);
- app.use("/api/services", servicesRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/turns", turnsRoutes);
+app.use("/api/services", servicesRoutes);
 
 app.use(errorHandler);
 
 dbConnection();
-const httpServer = http.createServer(app);
-httpServer.listen(4000, () => {
-  console.log("server running on port 4000");
-});
+export const ioInstance = io(app)
+ioEvents(ioInstance)
 
-console.log("index");
+

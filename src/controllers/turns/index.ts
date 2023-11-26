@@ -23,6 +23,7 @@ export const setTurns = {
         barber,
       });
       await turn.save();
+
       res.json({
         ok: true,
         turn,
