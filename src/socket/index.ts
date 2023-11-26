@@ -23,7 +23,7 @@ export const ioEvents = (io: any) => {
     socket.on("set-turn", ({barber, turnData}:any)=>{
       const targetBarber = onlineBarbers.find((e:any) => e.userId === barber._id);
       if(targetBarber){
-        io.to(socket.id).emit('private', {data: turnData});
+        io.to(targetBarber.socket.id).emit('private', {data: turnData});
       }
     })
 
