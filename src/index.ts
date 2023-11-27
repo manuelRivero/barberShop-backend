@@ -12,7 +12,10 @@ import servicesRoutes from "./routes/services/index";
 
 import { errorHandler } from "./middleware/errorHandler/error-handler";
 import cookieParser from "cookie-parser";
-import { io, ioEvents } from "./socket";
+const { Server } = require("socket.io");
+
+const onlineBarbers: any = [];
+
 
 
 const app: Application = express();
@@ -44,7 +47,31 @@ app.use("/api/services", servicesRoutes);
 app.use(errorHandler);
 
 dbConnection();
-export const ioInstance = io(app)
-ioEvents(ioInstance)
+
+const httpServer = http.createServer(app);
+
+const io = new Server(httpServer, { cors: { origin: "*" } });
+
+io.on("connection", (socket: any) => {
+  console.log("connection", socket.id);
+  socket.on("set-turn", ({ barber, turnData }: any) => {
+    console.log("set turn ", barber, turnData);
+    const targetBarber = onlineBarbers.find(
+      (e: any) => e.userId === barber._id
+    );
+    if (targetBarber) {
+      io.to(targetBarber.socket.id).emit("private", { data: turnData });
+    }
+    
+  });
+
+  socket.on("log-in", (user: any) => {
+    console.log("log-in");
+    onlineBarbers.push({ userId: user._id, socketId: socket.id });
+  });
+});
+
+
+httpServer.listen(4000)
 
 
