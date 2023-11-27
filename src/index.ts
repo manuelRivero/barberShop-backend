@@ -18,6 +18,7 @@ const onlineBarbers: any = [];
 
 
 
+
 const app: Application = express();
 
 dotenv.config();
@@ -55,17 +56,19 @@ const io = new Server(httpServer, { cors: { origin: "*" } });
 io.on("connection", (socket: any) => {
   console.log("connection", socket.id);
   socket.on("set-turn", ({ barber, turnData }: any) => {
-    console.log("set turn ", barber, turnData);
+    console.log("online barbers", onlineBarbers)
     const targetBarber = onlineBarbers.find(
       (e: any) => e.userId === barber._id
     );
+    console.log("target barber", targetBarber)
     if (targetBarber) {
-      io.to(targetBarber.socket.id).emit("private", { data: turnData });
+      io.to(targetBarber.socketId).emit("private", { data: turnData });
     }
     
   });
+  
 
-  socket.on("log-in", (user: any) => {
+  socket.on("log-in", ({user}: any) => {
     console.log("log-in");
     onlineBarbers.push({ userId: user._id, socketId: socket.id });
   });
