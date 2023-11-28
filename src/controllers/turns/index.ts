@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import moment from "moment";
 
 export const setTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (
     req: Request,
     res: Response,
@@ -12,6 +12,20 @@ export const setTurns = {
   ): Promise<void> => {
     const { role, uid } = req;
     const { startDate, endDate, type, barber, price, name } = req.body;
+    // check turn availability
+    const targetTurn = await Turn.aggregate(([
+      {
+        $match: {
+          startDate: { $gte: startDate, $lte: endDate }
+        }
+      }
+    ]))
+    if (targetTurn) {
+      res.status(400).json({
+        ok: false,
+        error: "Hora del turno ya agendada",
+      });
+    }
     try {
       const turn = new Turn({
         name,
@@ -39,24 +53,24 @@ export const setTurns = {
 };
 
 export const getTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-     console.log("dates", new Date(moment().utc().startOf("day").toISOString()), new Date(moment().utc().endOf("day").toISOString()))
+    console.log("dates", new Date(moment().utc().startOf("day").toISOString()), new Date(moment().utc().endOf("day").toISOString()))
     try {
       const turns = await Turn.aggregate([
         {
           $match: {
             barber: new mongoose.Types.ObjectId(id),
-            startDate: { $gte: new Date(moment().utc().startOf("day").toISOString()), $lt: new Date(moment().utc().endOf("day").toISOString())},
+            startDate: { $gte: new Date(moment().utc().startOf("day").toISOString()), $lt: new Date(moment().utc().endOf("day").toISOString()) },
           },
         },
       ]);
-       console.log("turns", turns)
+      console.log("turns", turns)
       res.status(200).json({
         ok: true,
         turns,
@@ -76,7 +90,7 @@ export const getTurnDetail = {
     req: Request,
     res: Response,
   ): Promise<void> => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     try {
       const turn = await Turn.aggregate([
@@ -85,12 +99,14 @@ export const getTurnDetail = {
             _id: new mongoose.Types.ObjectId(id),
           },
         },
-        {$lookup: {
-          from: 'users',
-          localField: 'barber',
-          foreignField: '_id',
-          as: 'barberData',
-        },}
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'barber',
+            foreignField: '_id',
+            as: 'barberData',
+          },
+        }
       ]);
 
       console.log("turn detail", turn)
