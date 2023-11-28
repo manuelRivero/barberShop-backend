@@ -62,7 +62,7 @@ io.on("connection", (socket: any) => {
     );
     console.log("target barber", targetBarber)
     if (targetBarber) {
-      io.to(targetBarber.socketId).emit("private", { data: turnData });
+      io.to(targetBarber.socketId).emit("add-turn", { data: turnData });
     }
     
   });
