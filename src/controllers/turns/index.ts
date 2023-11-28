@@ -20,7 +20,8 @@ export const setTurns = {
         }
       }
     ]))
-    if (targetTurn) {
+
+    if (targetTurn.length > 0) {
       res.status(400).json({
         ok: false,
         error: "Hora del turno ya agendada",
