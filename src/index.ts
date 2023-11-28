@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth/index";
 import turnsRoutes from "./routes/turns/index";
 import servicesRoutes from "./routes/services/index";
+import barbersRoutes from "./routes/barbers/index";
 
 
 import { errorHandler } from "./middleware/errorHandler/error-handler";
@@ -44,6 +45,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/turns", turnsRoutes);
 app.use("/api/services", servicesRoutes);
+app.use("/api/barbers", barbersRoutes);
 
 app.use(errorHandler);
 
