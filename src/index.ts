@@ -14,7 +14,7 @@ import { errorHandler } from "./middleware/errorHandler/error-handler";
 import cookieParser from "cookie-parser";
 const { Server } = require("socket.io");
 
-const onlineBarbers: any = [];
+let onlineBarbers: any = [];
 
 
 
@@ -54,7 +54,7 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer, { cors: { origin: "*" } });
 
 io.on("connection", (socket: any) => {
-  console.log("connection", socket.id);
+
   socket.on("set-turn", ({ barber, turnData }: any) => {
     console.log("online barbers", onlineBarbers)
     const targetBarber = onlineBarbers.find(
@@ -71,6 +71,11 @@ io.on("connection", (socket: any) => {
   socket.on("log-in", ({user}: any) => {
     console.log("log-in");
     onlineBarbers.push({ userId: user._id, socketId: socket.id });
+  });
+
+  socket.on("remove-online-barber", ({user}:any) => {
+    onlineBarbers = onlineBarbers.filter( (e:any) => e.userId !== user._id)
+    console.log("online barbers", onlineBarbers)
   });
 });
 
