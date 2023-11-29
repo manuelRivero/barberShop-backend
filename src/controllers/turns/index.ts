@@ -13,10 +13,11 @@ export const setTurns = {
     const { role, uid } = req;
     const { startDate, endDate, type, barber, price, name } = req.body;
     // check turn availability
+    console.log("dates set turn")
     const targetTurn = await Turn.aggregate(([
       {
         $match: {
-          startDate: { $gte: startDate, $lte: endDate }
+          startDate: { $gte: new Date(startDate), $lte: new Date(endDate) }
         }
       }
     ]))
