@@ -72,7 +72,9 @@ io.on("connection", (socket: any) => {
 
   socket.on("log-in", ({user}: any) => {
     console.log("log-in");
-    onlineBarbers.push({ userId: user._id, socketId: socket.id });
+    const newBarverList = onlineBarbers.filter((e:any) => e.userId !== user._id)
+    newBarverList.push({ userId: user._id, socketId: socket.id });
+    onlineBarbers = newBarverList
   });
 
   socket.on("remove-online-barber", ({user}:any) => {
