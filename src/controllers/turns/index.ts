@@ -20,7 +20,7 @@ export const setTurns = {
         }
       }
     ]))
-
+console.log("set turn, target turn", targetTurn)
     if (targetTurn.length > 0) {
       res.status(400).json({
         ok: false,
