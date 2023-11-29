@@ -17,11 +17,14 @@ export const setTurns = {
     const targetTurn = await Turn.aggregate(([
       {
         $match: {
-          startDate: { $gte: new Date(startDate), $lte: new Date(endDate) }
+          $or: [
+            { startDate: { $gte: new Date(startDate), $lte: new Date(endDate) } },
+            { endDate : { $gte: new Date(startDate), $lte: new Date(endDate)}}
+          ]
         }
       }
     ]))
-console.log("set turn, target turn", targetTurn)
+    console.log("set turn, target turn", targetTurn)
     if (targetTurn.length > 0) {
       res.status(400).json({
         ok: false,
