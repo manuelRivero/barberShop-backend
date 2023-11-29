@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import moment from "moment";
 
 export const setTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (
     req: Request,
     res: Response,
@@ -12,6 +12,26 @@ export const setTurns = {
   ): Promise<void> => {
     const { role, uid } = req;
     const { startDate, endDate, type, barber, price, name } = req.body;
+    // check turn availability
+    console.log("dates set turn")
+    const targetTurn = await Turn.aggregate(([
+      {
+        $match: {
+          $or: [
+            { startDate: { $gte: new Date(startDate), $lte: new Date(endDate) } },
+            { endDate : { $gte: new Date(startDate), $lte: new Date(endDate)}}
+          ]
+        }
+      }
+    ]))
+    console.log("set turn, target turn", targetTurn)
+    if (targetTurn.length > 0) {
+      res.status(400).json({
+        ok: false,
+        error: "Hora del turno ya agendada",
+      });
+      return
+    }
     try {
       const turn = new Turn({
         name,
@@ -39,7 +59,7 @@ export const setTurns = {
 };
 
 export const getTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (
     req: Request,
     res: Response,
@@ -56,7 +76,7 @@ export const getTurns = {
           },
         },
       ]);
-       console.log("turns", turns)
+      console.log("turns", turns)
       res.status(200).json({
         ok: true,
         turns,
@@ -76,7 +96,7 @@ export const getTurnDetail = {
     req: Request,
     res: Response,
   ): Promise<void> => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     try {
       const turn = await Turn.aggregate([
@@ -85,12 +105,14 @@ export const getTurnDetail = {
             _id: new mongoose.Types.ObjectId(id),
           },
         },
-        {$lookup: {
-          from: 'users',
-          localField: 'barber',
-          foreignField: '_id',
-          as: 'barberData',
-        },}
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'barber',
+            foreignField: '_id',
+            as: 'barberData',
+          },
+        }
       ]);
 
       console.log("turn detail", turn)
