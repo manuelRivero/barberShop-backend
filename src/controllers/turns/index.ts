@@ -27,6 +27,7 @@ console.log("set turn, target turn", targetTurn)
         ok: false,
         error: "Hora del turno ya agendada",
       });
+      return
     }
     try {
       const turn = new Turn({
