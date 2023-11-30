@@ -66,13 +66,13 @@ export const getTurns = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-     console.log("dates", new Date(moment().startOf("day").toISOString()), new Date(moment().endOf("day").toISOString()))
+     console.log("dates", new Date(moment().toISOString()), new Date(moment().toISOString()))
     try {
       const turns = await Turn.aggregate([
         {
           $match: {
             barber: new mongoose.Types.ObjectId(id),
-            startDate: { $gte: new Date(moment().startOf("day").toISOString()), $lt: new Date(moment().endOf("day").toISOString())},
+            startDate: { $gte: new Date(moment().startOf("day").toDate()), $lt: new Date(moment().endOf("day").toISOString())},
           },
         },
       ]);
