@@ -72,8 +72,8 @@ export const getTurns = {
     console.log(
       "dates",
       day,
-      moment().set({ day: day, hour: 0, minutes: 0 }).toDate(),
-      moment().set({ day: day, hour: 23, minutes: 59 }).toDate()
+      moment().set({ date: day, hour: 0, minutes: 0 }).toDate(),
+      moment().set({ date: day, hour: 23, minutes: 59 }).toDate()
     );
     try {
       const turns = await Turn.aggregate([
@@ -81,8 +81,8 @@ export const getTurns = {
           $match: {
             barber: new mongoose.Types.ObjectId(id),
             startDate: {
-              $gte: moment().set({ day: day, hour: 0, minutes: 0 }).toDate(),
-              $lt: moment().set({ day: day, hour: 23, minutes: 59 }).toDate(),
+              $gte: moment().set({ date: day, hour: 0, minutes: 0 }).toDate(),
+              $lt: moment().set({ date: day, hour: 23, minutes: 59 }).toDate(),
             },
           },
         },
