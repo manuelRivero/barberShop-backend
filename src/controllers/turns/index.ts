@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import moment from "moment";
 
 export const setTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => { },
+  check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (
     req: Request,
     res: Response,
@@ -13,24 +13,26 @@ export const setTurns = {
     const { role, uid } = req;
     const { startDate, endDate, type, barber, price, name } = req.body;
     // check turn availability
-    console.log("dates set turn")
-    const targetTurn = await Turn.aggregate(([
+    console.log("dates set turn");
+    const targetTurn = await Turn.aggregate([
       {
         $match: {
           $or: [
-            { startDate: { $gte: new Date(startDate), $lte: new Date(endDate) } },
-            { endDate : { $gte: new Date(startDate), $lte: new Date(endDate)}}
-          ]
-        }
-      }
-    ]))
-    console.log("set turn, target turn", targetTurn)
+            {
+              startDate: { $gte: new Date(startDate), $lte: new Date(endDate) },
+            },
+            { endDate: { $gte: new Date(startDate), $lte: new Date(endDate) } },
+          ],
+        },
+      },
+    ]);
+    console.log("set turn, target turn", targetTurn);
     if (targetTurn.length > 0) {
       res.status(400).json({
         ok: false,
         error: "Hora del turno ya agendada",
       });
-      return
+      return;
     }
     try {
       const turn = new Turn({
@@ -59,24 +61,33 @@ export const setTurns = {
 };
 
 export const getTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => { },
+  check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-     console.log("dates", moment(), moment().set({hour: 0, minutes: 0}).utc().utcOffset(3, true).toDate(), moment().set({hour: 23, minutes: 59}).utc().utcOffset(3, true).toDate())
+    const day = moment().utc().utcOffset(3, true).get("days");
+    console.log(
+      "dates",
+      day,
+      moment().set({ hour: 0, minutes: 0 }).toDate(),
+      moment().set({ day: day, hour: 23, minutes: 59 }).toDate()
+    );
     try {
       const turns = await Turn.aggregate([
         {
           $match: {
             barber: new mongoose.Types.ObjectId(id),
-            startDate: { $gte: moment().set({hour: 0, minutes: 0}).utc().utcOffset(3, true).toDate(), $lt: moment().set({hour: 23, minutes: 59}).utc().utcOffset(3, true).toDate()},
+            startDate: {
+              $gte: moment().set({ day: day, hour: 0, minutes: 0 }).toDate(),
+              $lt: moment().set({ day: day, hour: 23, minutes: 59 }).toDate(),
+            },
           },
         },
       ]);
-      console.log("turns", turns)
+      console.log("turns", turns);
       res.status(200).json({
         ok: true,
         turns,
@@ -92,10 +103,7 @@ export const getTurns = {
 };
 
 export const getTurnDetail = {
-  do: async (
-    req: Request,
-    res: Response,
-  ): Promise<void> => {
+  do: async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     try {
@@ -107,15 +115,15 @@ export const getTurnDetail = {
         },
         {
           $lookup: {
-            from: 'users',
-            localField: 'barber',
-            foreignField: '_id',
-            as: 'barberData',
+            from: "users",
+            localField: "barber",
+            foreignField: "_id",
+            as: "barberData",
           },
-        }
+        },
       ]);
 
-      console.log("turn detail", turn)
+      console.log("turn detail", turn);
 
       res.status(200).json({
         ok: true,
@@ -128,5 +136,5 @@ export const getTurnDetail = {
         error: "El turno no se guardo",
       });
     }
-  }
-}
+  },
+};
