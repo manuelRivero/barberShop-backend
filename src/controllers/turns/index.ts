@@ -66,7 +66,7 @@ export const getTurns = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-     console.log("dates", moment(), moment().set({hour: 23, minutes: 59}).utc().utcOffset(3, true), moment().set({hour: 23, minutes: 59}).utc().utcOffset(3, true))
+     console.log("dates", moment(), moment().set({hour: 0, minutes: 0}).utc().utcOffset(3, true).toDate(), moment().set({hour: 23, minutes: 59}).utc().utcOffset(3, true).toDate())
     try {
       const turns = await Turn.aggregate([
         {
