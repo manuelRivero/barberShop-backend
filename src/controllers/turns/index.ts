@@ -72,7 +72,7 @@ export const getTurns = {
     console.log(
       "dates",
       day,
-      moment().utc().toDate(),
+      moment().utc().toLocaleString(),
       moment().utc().set({  hour: 0, minutes: 0 }).toDate(),
       moment().set({ hour: 23, minutes: 59 }).toDate()
     );
@@ -82,8 +82,8 @@ export const getTurns = {
           $match: {
             barber: new mongoose.Types.ObjectId(id),
             startDate: {
-              $gte: moment().set({ dates: parseInt(day), hour: 0, minutes: 0 }).toDate(),
-              $lt: moment().set({ dates: parseInt(day), hour: 23, minutes: 59 }).toDate(),
+              $gte: moment().utc().set({ dates: parseInt(day), hour: 0, minutes: 0 }).toDate(),
+              $lt: moment().utc().set({ dates: parseInt(day), hour: 23, minutes: 59 }).toDate(),
             },
           },
         },
