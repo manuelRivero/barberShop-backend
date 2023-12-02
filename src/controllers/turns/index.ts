@@ -72,8 +72,8 @@ export const getTurns = {
     console.log(
       "dates",
       day,
-      moment().utc().utcOffset(3, true).toDate(),
-      moment().utc().utcOffset(3, true).set({  hour: 0, minutes: 0 }).toDate(),
+      moment().utc().toDate(),
+      moment().utc().set({  hour: 0, minutes: 0 }).toDate(),
       moment().set({ hour: 23, minutes: 59 }).toDate()
     );
     try {
