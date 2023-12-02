@@ -73,8 +73,8 @@ export const getTurns = {
       "dates",
       day,
       moment().utc().utcOffset(3, true).toDate(),
-      moment().utc().utcOffset(3, true).set({ dates: parseInt(day), hour: 0, minutes: 0 }).toDate(),
-      moment().set({ dates: parseInt(day), hour: 23, minutes: 59 }).toDate()
+      moment().utc().utcOffset(3, true).set({  hour: 0, minutes: 0 }).toDate(),
+      moment().set({ hour: 23, minutes: 59 }).toDate()
     );
     try {
       const turns = await Turn.aggregate([
