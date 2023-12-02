@@ -68,11 +68,11 @@ export const getTurns = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-    const day = moment().get("date").toLocaleString();
+    const day = moment().utc().get("date").toLocaleString();
     console.log(
       "dates",
       day,
-      moment().utc().utcOffset(3).toDate(),
+      moment().utc().toDate(),
       moment().set({ dates: parseInt(day), hour: 0, minutes: 0 }).toDate(),
       moment().set({ dates: parseInt(day), hour: 23, minutes: 59 }).toDate()
     );
