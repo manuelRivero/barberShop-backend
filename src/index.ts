@@ -9,6 +9,9 @@ import authRoutes from "./routes/auth/index";
 import turnsRoutes from "./routes/turns/index";
 import servicesRoutes from "./routes/services/index";
 import barbersRoutes from "./routes/barbers/index";
+import statsRoutes from "./routes/stats/index";
+import reviewsRoutes from "./routes/reviews/index";
+import galleryRoutes from "./routes/gallery/index";
 
 
 import { errorHandler } from "./middleware/errorHandler/error-handler";
@@ -46,6 +49,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/turns", turnsRoutes);
 app.use("/api/services", servicesRoutes);
 app.use("/api/barbers", barbersRoutes);
+app.use("/api/stats", statsRoutes);
+app.use("/api/reviews", reviewsRoutes);
+app.use("/api/gallery", galleryRoutes);
 
 app.use(errorHandler);
 
@@ -85,5 +91,3 @@ io.on("connection", (socket: any) => {
 
 
 httpServer.listen(4000)
-
-
