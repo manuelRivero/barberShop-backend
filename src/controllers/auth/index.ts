@@ -91,7 +91,7 @@ export const login = {
           message: "Contraseña incorrecta",
         });
       }
-      const token = await generatejWT(targetUser.id);
+      const token = await generatejWT(targetUser._id.toString());
       res.status(200).json({
         ok: true,
         token,
