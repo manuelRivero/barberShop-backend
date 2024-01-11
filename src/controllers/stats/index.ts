@@ -34,7 +34,7 @@ export const getThisWeekStats = async (
       },
       {
         $addFields: {
-          day: { $dayOfMonth: "$createdAt" },
+          day: { $dayOfMonth: "$endDate" },
           date : "$endDate"
         },
       },
