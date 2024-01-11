@@ -7,18 +7,19 @@ export const getThisWeekStats = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const firstDayOfWeek = moment().startOf("week").set("hour", 0);
-  const lastDayOfWeek = moment().endOf("week").set("hour", 23);
-  const {id} = req.query
-  const {uid} = req
+
+  const firstDayOfWeek = req.body.from
+  const lastDayOfWeek = req.body.to
+  const { id } = req.query
+  const { uid } = req
 
   try {
     const data = await Turn.aggregate([
       {
         $match: {
           startDate: {
-            $gte: firstDayOfWeek.toDate(),
-            $lte: lastDayOfWeek.toDate(),
+            $gte: new Date(firstDayOfWeek),
+            $lte: new Date(lastDayOfWeek),
           },
           barber: new mongoose.Types.ObjectId(id ? String(id) : uid)
         },
@@ -44,7 +45,7 @@ export const getThisWeekStats = async (
         },
       },
     ]);
-    res.json({data:data});
+    res.json({ data: data });
   } catch (error) {
     res.json({ error: "No se pudo cargar la infomación solicitada" });
   }
