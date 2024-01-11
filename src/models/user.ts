@@ -25,6 +25,10 @@ const User = new Schema(
       type:String,
       defaul: null
     },
+    commission:{
+      type:Number,
+      default: null
+    }
   },
   {
     collection: "users",

@@ -27,7 +27,8 @@ export const getBarberDetail = async (req: Request, res: Response) => {
             email: 1,
             image: 1,
             role: 1,
-            bio: 1
+            bio: 1,
+            commission: 1,
         }
     }]);
     console.log("barbers", barber);
