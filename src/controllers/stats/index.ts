@@ -35,11 +35,13 @@ export const getThisWeekStats = async (
       {
         $addFields: {
           day: { $dayOfMonth: "$createdAt" },
+          date : "$endDate"
         },
       },
       {
         $group: {
           _id: "$day",
+          date:{ $first: "$date"},
           dayTotalServices: { $sum: 1 },
           dayTotalAmount: { $sum: "$price" },
         },
