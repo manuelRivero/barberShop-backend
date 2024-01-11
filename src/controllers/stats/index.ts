@@ -8,8 +8,8 @@ export const getThisWeekStats = async (
   next: NextFunction
 ): Promise<void> => {
 
-  const firstDayOfWeek = req.body.from
-  const lastDayOfWeek = req.body.to
+  const firstDayOfWeek = req.query.from
+  const lastDayOfWeek = req.query.to
   const { id } = req.query
   const { uid } = req
 
@@ -18,8 +18,8 @@ export const getThisWeekStats = async (
       {
         $match: {
           startDate: {
-            $gte: new Date(firstDayOfWeek),
-            $lte: new Date(lastDayOfWeek),
+            $gte: new Date(firstDayOfWeek as string),
+            $lte: new Date(lastDayOfWeek as string),
           },
           barber: new mongoose.Types.ObjectId(id ? String(id) : uid)
         },
