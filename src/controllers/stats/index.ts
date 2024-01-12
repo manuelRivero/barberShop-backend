@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import Turn from "../../models/turns";
 import moment from "moment";
 import mongoose from "mongoose";
+
+
 export const getThisWeekStats = async (
   req: Request,
   res: Response,
@@ -52,3 +54,31 @@ export const getThisWeekStats = async (
     res.json({ error: "No se pudo cargar la infomación solicitada" });
   }
 };
+
+
+export const getAllStatsFromDates = async (req: Request, res: Response) => {
+  const from = req.query.from
+  const to = req.query.to
+  try {
+    const data = await Turn.aggregate([
+      {
+        $match: {
+          startDate: {
+            $gte: new Date(from as string),
+            $lte: new Date(to as string),
+          },
+        },
+      },
+      {
+        $group:{
+          _id:"$user",
+          totalTurns: {$sum: 1},
+          total:{$sum: "$price"}
+        }
+      }
+      ]);
+    res.json({ data: data });
+  } catch (error) {
+    res.json({ error: "No se pudo cargar la infomación solicitada" });
+  }
+}
