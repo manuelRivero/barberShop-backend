@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import moment from "moment";
 
 export const setTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (
     req: Request,
     res: Response,
@@ -61,7 +61,7 @@ export const setTurns = {
 };
 
 export const getTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (
     req: Request,
     res: Response,
@@ -143,3 +143,30 @@ export const getTurnDetail = {
   },
 };
 
+export const getActiveTurn = {
+  do: async (req: Request, res: Response): Promise<void> => {
+    const { uid } = req
+    const turn = await Turn.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              user: new mongoose.Types.ObjectId(uid)
+            },
+            {
+              endDate:{
+                $gte: moment()
+                .set({ hour: 0, minutes: 0 }).utc().utcOffset(3, true)
+                .toDate(),
+              $lt: moment()
+                .set({ hour: 23, minutes: 59 }).utc().utcOffset(3, true)
+                .toDate(),
+              }
+            }
+          ]
+        }
+      }
+    ])
+    res.json(turn)
+  }
+}
