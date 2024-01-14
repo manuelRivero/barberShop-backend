@@ -4,8 +4,12 @@ import mongoose from "mongoose";
 
 export const getBarbers = {
     do: async (req: Request, res: Response) => {
+        const { uid } = req
         const barbers = await user.aggregate([{
-            $match: { role: "barber" }
+            $match: {
+                $or: [{ role: "barber" }, { role: "admin-barber" }],
+                _id: { $ne: new mongoose.Types.ObjectId(uid) }
+            }
         }]);
         console.log("barbers", barbers);
         res.json({
