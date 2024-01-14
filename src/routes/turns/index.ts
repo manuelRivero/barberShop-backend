@@ -10,7 +10,7 @@ const router = Router();
 router.post('/set', validateJWT, setTurns.do)
 router.get('/get/:id', validateJWT, getTurns.do)
 router.get('/detail/:id', validateJWT, getTurnDetail.do)
-router.get('/get-active/:id', validateJWT, getActiveTurn.do)
+router.get('/get-active', validateJWT, getActiveTurn.do)
 
 // router.get('/me',validateJWT, me.do)
 
