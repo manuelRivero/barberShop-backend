@@ -8,3 +8,13 @@ declare global {
     }
   }
 }
+
+
+export interface OnlineBarber {
+  userId: string;
+  socketId: string;
+}
+
+export interface SocketBarber {
+  _id: string;
+}
