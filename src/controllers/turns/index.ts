@@ -82,10 +82,10 @@ export const getTurns = {
             barber: new mongoose.Types.ObjectId(id),
             startDate: {
               $gte: moment()
-                .set({ dates: parseInt(day), hour: 0, minutes: 0 })
+                .set({ dates: day, hour: 0, minutes: 0 })
                 .toDate(),
               $lt: moment()
-                .set({ dates: parseInt(day), hour: 23, minutes: 59 })
+                .set({ dates: day, hour: 23, minutes: 59 })
                 .toDate(),
             },
           },
