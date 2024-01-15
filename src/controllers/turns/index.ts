@@ -75,9 +75,9 @@ export const getTurns = {
       day,
       hour,
       moment().get("date"),
-      moment().utc().utcOffset(-3, true).get("date"),
-      moment().utc().utcOffset(-3, true).get("date"),
-      moment().utc().utcOffset(-3, true).get("date").toLocaleString(),
+      moment().utc().utcOffset(+3, true).get("date"),
+      moment().utc().utcOffset(+3, true).get("date"),
+      moment().utc().utcOffset(+3, true).get("date").toLocaleString(),
       moment().get("date").toLocaleString()
     );
     try {
