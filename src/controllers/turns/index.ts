@@ -82,7 +82,7 @@ export const getTurns = {
                 .set({ dates: day, hour: 0, minutes: 0 })
                 .toDate(),
               $lte: moment()
-                .set({ dates: day, hour: 8, minutes: 0 })
+                .set({ dates: day, hour: 23, minutes: 0 })
                 .toDate(),
             },
           },
