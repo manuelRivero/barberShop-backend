@@ -25,6 +25,7 @@
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.1",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.44",
     "mongoose": "^7.4.2",
     "socket.io": "^4.7.2"
   },

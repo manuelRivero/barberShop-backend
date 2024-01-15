@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Turn from "../../models/turns";
 import mongoose from "mongoose";
-import moment from "moment";
+import moment from 'moment-timezone';
 
 export const setTurns = {
   check: async (req: Request, res: Response, next: NextFunction) => { },
@@ -74,11 +74,7 @@ export const getTurns = {
       "dates",
       day,
       hour,
-      moment().get("date"),
-      moment().utc().utcOffset(+3, true).get("date"),
-      moment().utc().utcOffset(+3, true).get("date"),
-      moment().utc().utcOffset(+3, true).get("date").toLocaleString(),
-      moment().get("date").toLocaleString()
+      moment.tz('America/Argentina/Buenos_Aires').get("date"),
     );
     try {
       const turns = await Turn.aggregate([
