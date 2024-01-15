@@ -80,7 +80,7 @@ export const getTurns = {
                 .set({ dates: day, hour: 0, minutes: 0 })
                 .toDate(),
               $lt: moment()
-                .set({ dates: day, hour: 23, minutes: 59 })
+                .set({ dates: day, hour: 22, minutes: 59 })
                 .toDate(),
             },
           },
@@ -138,6 +138,7 @@ export const getTurnDetail = {
   },
 };
 
+// agregar hora de cierre del local
 export const getActiveTurn = {
   do: async (req: Request, res: Response): Promise<void> => {
     const { uid } = req
