@@ -68,14 +68,8 @@ export const getTurns = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-    const day = moment().get("date");
-    const hour = moment().get("hour");
-    console.log(
-      "dates",
-      day,
-      hour,
-      moment.tz('America/Argentina/Buenos_Aires').get("date"),
-    );
+    const day = moment.tz('America/Argentina/Buenos_Aires').get("date");
+    
     try {
       const turns = await Turn.aggregate([
         {
@@ -156,10 +150,10 @@ export const getActiveTurn = {
             },
             {
               endDate:{
-                $gte: moment()
+                $gte: moment.tz('America/Argentina/Buenos_Aires')
                 .set({ hour: 0, minutes: 0 }).utc().utcOffset(3, true)
                 .toDate(),
-              $lt: moment()
+              $lt: moment.tz('America/Argentina/Buenos_Aires')
                 .set({ hour: 23, minutes: 59 }).utc().utcOffset(3, true)
                 .toDate(),
               }
