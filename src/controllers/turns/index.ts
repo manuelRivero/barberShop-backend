@@ -73,7 +73,8 @@ export const getTurns = {
     console.log(
       "dates",
       day,
-      hour
+      hour,
+      moment()
     );
     try {
       const turns = await Turn.aggregate([
