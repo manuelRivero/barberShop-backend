@@ -60,6 +60,8 @@ export const setTurns = {
   },
 };
 
+
+// set $lte params to bussinessHourEnd 
 export const getTurns = {
   check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (
@@ -69,7 +71,7 @@ export const getTurns = {
   ): Promise<void> => {
     const { id } = req.params;
     const day = moment.tz('America/Argentina/Buenos_Aires').get("date");
-    
+    console.log("day", day)
     try {
       const turns = await Turn.aggregate([
         {
@@ -79,8 +81,8 @@ export const getTurns = {
               $gte: moment()
                 .set({ dates: day, hour: 0, minutes: 0 })
                 .toDate(),
-              $lt: moment()
-                .set({ dates: day, hour: 22, minutes: 59 })
+              $lte: moment()
+                .set({ dates: day, hour: 8, minutes: 0 })
                 .toDate(),
             },
           },
