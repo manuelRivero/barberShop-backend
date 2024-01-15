@@ -74,7 +74,11 @@ export const getTurns = {
       "dates",
       day,
       hour,
-      moment()
+      moment(),
+      moment().utc().utcOffset(3, true),
+      moment().utc().utcOffset(3, true).get("date"),
+      moment().utc().utcOffset(3, true).toLocaleString(),
+      moment().toLocaleString()
     );
     try {
       const turns = await Turn.aggregate([
