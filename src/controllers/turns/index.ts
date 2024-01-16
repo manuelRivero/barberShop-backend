@@ -154,10 +154,10 @@ export const getActiveTurn = {
             {
               endDate:{
                 $gte: moment.tz('America/Argentina/Buenos_Aires')
-                .set({ hour: 0, minutes: 0 }).utc().utcOffset(3, true)
+                .set({ hour: 0, minutes: 0 })
                 .toDate(),
               $lt: moment.tz('America/Argentina/Buenos_Aires')
-                .set({ hour: 23, minutes: 59 }).utc().utcOffset(3, true)
+                .set({ hour: 23, minutes: 59 })
                 .toDate(),
               }
             }
