@@ -28,6 +28,10 @@ const User = new Schema(
     commission:{
       type:Number,
       default: null
+    },
+    score:{
+      type:Number,
+      default: 5,
     }
   },
   {
