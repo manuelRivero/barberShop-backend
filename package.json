@@ -27,6 +27,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.44",
     "mongoose": "^7.4.2",
+    "rand-token": "^1.0.1",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {

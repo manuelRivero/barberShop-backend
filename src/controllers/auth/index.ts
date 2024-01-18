@@ -1,11 +1,13 @@
 import User from "../../models/user";
+import Token from "../../models/token";
 import { validateBody } from "./../../helpers/validate/index";
 import bcript from "bcryptjs";
 import joi from "joi";
-import { generatejWT } from "../../helpers/auth/auth/index";
+import { generateRefreshJWT, generatejWT } from "../../helpers/auth/auth/index";
 import cloudinary from "../../helpers/imageUpload/index";
 import mongoose from "mongoose";
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 // export const register = {
 //   check: (req, res, next) => {
@@ -77,6 +79,7 @@ export const login = {
     const { email, password } = req.body;
     console.log("email", email, "password", password)
     const targetUser = await User.findOne({ email });
+    const targetRefreshToken = await Token.findOne({ user: targetUser })
     console.log("Target user", targetUser)
     if (!targetUser) {
       return res.status(404).json({
@@ -92,13 +95,55 @@ export const login = {
         });
       }
       const token = await generatejWT(targetUser._id.toString(), targetUser.role);
+      const refreshToken = await generateRefreshJWT(targetUser._id, targetUser.role)
+
+      if(targetRefreshToken) {
+        targetRefreshToken.deleteOne()
+      }
+      
+      const newRefreshToken = new Token({
+        refreshToken,
+        user: targetUser._id
+      });
+      await newRefreshToken.save();
+
       res.status(200).json({
         ok: true,
         token,
+        refreshToken,
       });
     }
   },
 };
+
+export const refreshTokenFunc = {
+  do: async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.body.token;
+    const targetToken = await Token.findOne({ refreshToken });
+
+    if (!refreshToken) return res.sendStatus(401);
+
+    if (targetToken === null) return res.sendStatus(403);
+
+    if (targetToken) await targetToken.deleteOne();
+
+    jwt.verify(refreshToken, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, async (err: any, user: any) => {
+      console.log("USER", user)
+      if (err) return res.sendStatus(403);
+      const accessToken = jwt.sign({ username: user.username }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "1d" });
+      const generateRefreshToken = await generateRefreshJWT(user.uid, user.role)
+
+      const newRefreshToken = new Token({
+        refreshToken: generateRefreshToken,
+        user: user.uid
+      });
+      await newRefreshToken.save();
+      res.json({ token: accessToken, refreshToken: generateRefreshToken, user: user.uid });
+
+    })
+
+  }
+}
 
 export const me = {
   do: async (req: Request, res: Response) => {
@@ -130,7 +175,7 @@ export const facebookLogin = {
           name: first_name,
           lastName: last_name,
           email,
-          role:'user'
+          role: 'user'
         });
         await newUser.save();
         const token = await generatejWT(newUser._id.toString());
@@ -138,7 +183,7 @@ export const facebookLogin = {
           ok: true,
           token,
         });
-      } catch (error) {}
+      } catch (error) { }
       return;
     }
     const token = await generatejWT(targetUser.id);
