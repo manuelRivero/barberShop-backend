@@ -98,7 +98,7 @@ export const login = {
       const refreshToken = await generateRefreshJWT(targetUser._id, targetUser.role)
 
       if(targetRefreshToken) {
-        targetRefreshToken.deleteOne()
+        await targetRefreshToken.deleteOne()
       }
       
       const newRefreshToken = new Token({
