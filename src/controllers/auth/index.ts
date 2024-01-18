@@ -119,6 +119,7 @@ export const login = {
 export const refreshTokenFunc = {
   do: async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.body.token;
+    console.log("req.body", req.body)
     const targetToken = await Token.findOne({ refreshToken });
 
     if (!refreshToken) return res.sendStatus(401);
