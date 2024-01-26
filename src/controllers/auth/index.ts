@@ -121,7 +121,7 @@ export const refreshTokenFunc = {
     const refreshToken = req.body.token;
     console.log("req.body", req.body)
     const targetToken = await Token.findOne({ refreshToken });
-
+console.log("targetToken", targetToken)
     if (!refreshToken) return res.sendStatus(401);
 
     if (targetToken === null) return res.sendStatus(403);
