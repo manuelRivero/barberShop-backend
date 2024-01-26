@@ -126,19 +126,16 @@ console.log("targetToken", targetToken)
 
     if (targetToken === null) return res.sendStatus(403);
 
-    if (targetToken) await targetToken.deleteOne();
 
     jwt.verify(refreshToken, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, async (err: any, user: any) => {
       console.log("USER", user)
       if (err) return res.sendStatus(403);
-      const accessToken = jwt.sign({ username: user.username }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "1d" });
+      const accessToken = jwt.sign({ uid:user.uid, role:user.role }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "1d" });
       const generateRefreshToken = await generateRefreshJWT(user.uid, user.role)
 
-      const newRefreshToken = new Token({
-        refreshToken: generateRefreshToken,
-        user: user.uid
-      });
-      await newRefreshToken.save();
+      targetToken.user = user.uid
+      targetToken.refreshToken = generateRefreshToken as string
+      await targetToken.save();
       res.json({ token: accessToken, refreshToken: generateRefreshToken, user: user.uid });
 
     })
