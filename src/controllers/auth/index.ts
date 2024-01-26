@@ -134,7 +134,7 @@ export const refreshTokenFunc = {
         await Token.findOneAndRemove({ refreshToken })
         return res.status(403).json({ok:false, error:"refresh token expirado"})
       };
-      const accessToken = jwt.sign({ uid: user.uid, role: user.role }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "1d" });
+      const accessToken = jwt.sign({ uid: user.uid, role: user.role }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "8h" });
       const generateRefreshToken = await generateRefreshJWT(user.uid, user.role)
 
       targetToken.user = user.uid
