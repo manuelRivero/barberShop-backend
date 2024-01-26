@@ -3,7 +3,7 @@ export const generatejWT = (uid = '', role="user") => {
     return new Promise((resolve, reject) => {
         const payload = { uid, role };
         jwt.sign(payload,`${process.env.SECRETORPRIVATEKEY}`, {
-            expiresIn: '1m'
+            expiresIn: '8h'
         }, (err, token) => {
             if (err) {
                 console.log(err);
