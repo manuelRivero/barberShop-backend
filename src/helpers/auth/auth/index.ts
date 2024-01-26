@@ -19,7 +19,7 @@ export const generateRefreshJWT = (uid: any, role: any) => {
     return new Promise((resolve, reject) => {
         const payload = { uid, role };
         jwt.sign(payload,`${process.env.REFRESH_SECRETORPRIVATEKEY}`, {
-            expiresIn: '2m'
+            expiresIn: '7d'
         }, (err, tokenRefresh) => {
             if (err) {
                 console.log(err);

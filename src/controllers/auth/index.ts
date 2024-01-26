@@ -128,10 +128,10 @@ export const refreshTokenFunc = {
 
 
     jwt.verify(refreshToken, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, async (err: any, user: any) => {
-      console.log("USER", user)
+
       if (err) {
         console.log("jwt.verify", err)
-        return res.sendStatus(403)
+        return res.status(403).json({ok:false, error:"refresh token expirado"})
       };
       const accessToken = jwt.sign({ uid: user.uid, role: user.role }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "1d" });
       const generateRefreshToken = await generateRefreshJWT(user.uid, user.role)
