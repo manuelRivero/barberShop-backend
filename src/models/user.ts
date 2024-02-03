@@ -32,6 +32,9 @@ const User = new Schema(
     score:{
       type:Number,
       default: 5,
+    },
+    isActive:{
+      type:Boolean
     }
   },
   {
