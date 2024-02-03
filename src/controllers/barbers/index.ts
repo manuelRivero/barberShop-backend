@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import user from "../../models/user";
-import mongoose from "mongoose";
+import mongoose, { set } from "mongoose";
 import schedule from "node-schedule"
 import moment from "moment";
 
@@ -48,18 +48,26 @@ export const disableBarber = async (req: Request, res: Response) => {
     const { barber, from, to } = req.body;
     const targetBarber = await user.findById(new mongoose.Types.ObjectId(barber));
 
-    console.log("moment date", moment(to, "DD/MM/yyyy - hh-mm").tz('America/Argentina/Buenos_Aires', true).toDate())
-
     if (!targetBarber) {
         return res.status(400).json({ ok: false, message: "Barbero no encontrado" })
     } else {
-        targetBarber.isActive = false
-        await targetBarber.save()
-        const job = schedule.scheduleJob(moment(to, "DD/mm/yyyy - hh-mm").tz('America/Argentina/Buenos_Aires').toDate(), async function () {
-            console.log("schedule execution")
-            targetBarber.isActive = true
-            await targetBarber.save()
 
+        schedule.scheduleJob(moment(from, "DD/MM/yyyy").set("hours", 0).set("minutes", 0).toDate(), function () {
+            const saveStatus = async () => {
+                targetBarber.isActive = false
+                await targetBarber.save()
+            }
+            saveStatus()
+        });
+
+        schedule.scheduleJob(moment(to, "DD/MM/yyyy").set("hours", 0).set("minutes", 0).toDate(), function () {
+            console.log("schedule execution")
+            const saveStatus = async () => {
+                targetBarber.isActive = true
+                await targetBarber.save()
+
+            }
+            saveStatus()
         });
 
         return res.status(200).json({ ok: true })
