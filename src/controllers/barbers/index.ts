@@ -7,9 +7,15 @@ import moment from "moment";
 export const getBarbers = {
     do: async (req: Request, res: Response) => {
         const { uid } = req
+        const { isAdmin } = req.query
+        let match: any = {}
+
+        if (!isAdmin) {
+            match = { isActive: true }
+        }
         const barbers = await user.aggregate([{
             $match: {
-                $or: [{ role: "barber" }, { role: "admin-barber" }],
+                $and: [{$or: [{ role: "barber" }, { role: "admin-barber" }], match}],
                 _id: { $ne: new mongoose.Types.ObjectId(uid) }
             }
         }]);
