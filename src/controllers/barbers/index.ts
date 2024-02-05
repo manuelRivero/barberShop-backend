@@ -15,7 +15,7 @@ export const getBarbers = {
         }
         const barbers = await user.aggregate([{
             $match: {
-                $and: [{$or: [{ role: "barber" }, { role: "admin-barber" }], match}],
+                $and: [{$or: [{ role: "barber" }, { role: "admin-barber" }]}, match],
                 _id: { $ne: new mongoose.Types.ObjectId(uid) }
             }
         }]);
