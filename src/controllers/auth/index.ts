@@ -167,7 +167,7 @@ export const facebookLogin = {
     );
     const { email, last_name, first_name } = await data.json();
 
-    const targetUser = await User.findOne({ email: `/^${email}$/i` });
+    const targetUser = await User.findOne({ email: {$regex: email, $options: 'i'} });
     if (!targetUser) {
       // register user
       console.log("register case");
