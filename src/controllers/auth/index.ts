@@ -78,7 +78,7 @@ export const login = {
     console.log("login");
     const { email, password } = req.body;
     console.log("email", email, "password", password)
-    const targetUser = await User.findOne({ email: `/^${email}$/i` });
+    const targetUser = await User.findOne({ email: {$regex: email, $options: 'i'} });
     const targetRefreshToken = await Token.findOne({ user: targetUser })
     console.log("Target user", targetUser)
     if (!targetUser) {
