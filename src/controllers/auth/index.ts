@@ -78,7 +78,7 @@ export const login = {
     console.log("login");
     const { email, password } = req.body;
     console.log("email", email, "password", password)
-    const targetUser = await User.findOne({ email });
+    const targetUser = await User.findOne({ email: `/^${email}$/i` });
     const targetRefreshToken = await Token.findOne({ user: targetUser })
     console.log("Target user", targetUser)
     if (!targetUser) {
@@ -167,7 +167,7 @@ export const facebookLogin = {
     );
     const { email, last_name, first_name } = await data.json();
 
-    const targetUser = await User.findOne({ email });
+    const targetUser = await User.findOne({ email: `/^${email}$/i` });
     if (!targetUser) {
       // register user
       console.log("register case");

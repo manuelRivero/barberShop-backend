@@ -41,6 +41,50 @@ export const createService = {
   },
 };
 
+export const editService = {
+  check: async (req: Request, res: Response, next: NextFunction) => {},
+  do: async (req: Request, res: Response, next: NextFunction) => {
+    const { role, uid, files } = req;
+    const { duration, price, description, name, serviceId } = req.body;
+
+    const targetService = await Service.findById({ id: serviceId })
+    console.log("files.image", files?.image)
+
+    if (!targetService) {
+      return res.status(404).json({
+        ok: false,
+        error: "No se encontró el servicio"
+      })
+    }
+
+    try {
+      const imageUrl = await cloudinary.uploader.upload(
+        // @ts-ignore
+        files.image.tempFilePath,
+        { folder: "services" }
+      );
+      targetService.image = imageUrl.secure_url;
+      targetService.imageName = imageUrl.display_name
+    } catch {
+      return res.status(500).json({
+        ok: false,
+        error: "Error al subir la imagen, el servicio no se guardo.",
+      });
+    }
+
+    targetService.duration = duration
+    targetService.price = price
+    targetService.description = description
+
+    await targetService.save();
+    console.log("service", targetService)
+    res.json({
+      ok: true,
+      targetService,
+    });
+  },
+};
+
 export const getServices = {
   do: async (req: Request, res: Response) => {
     console.log("service controller")
