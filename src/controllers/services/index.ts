@@ -81,7 +81,7 @@ export const editService = {
     try {
       await targetService.save();
       console.log("service", targetService)
-      res.json({
+     return res.json({
         ok: true,
         targetService,
       });
