@@ -4,7 +4,7 @@ import Service from "../../models/services";
 import mongoose from "mongoose";
 
 export const createService = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
     const { duration, price, description, name } = req.body;
@@ -42,7 +42,7 @@ export const createService = {
 };
 
 export const editService = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
     const { duration, price, description, name, id } = req.body;
@@ -57,19 +57,21 @@ export const editService = {
       })
     }
 
-    try {
-      const imageUrl = await cloudinary.uploader.upload(
-        // @ts-ignore
-        files.image.tempFilePath,
-        { folder: "services" }
-      );
-      targetService.image = imageUrl.secure_url;
-      targetService.imageName = imageUrl.display_name
-    } catch {
-      return res.status(500).json({
-        ok: false,
-        error: "Error al subir la imagen, el servicio no se guardo.",
-      });
+    if (files?.image) {
+      try {
+        const imageUrl = await cloudinary.uploader.upload(
+          // @ts-ignore
+          files.image.tempFilePath,
+          { folder: "services" }
+        );
+        targetService.image = imageUrl.secure_url;
+        targetService.imageName = imageUrl.display_name
+      } catch {
+        return res.status(500).json({
+          ok: false,
+          error: "Error al subir la imagen, el servicio no se guardo.",
+        });
+      }
     }
     targetService.name = name
     targetService.duration = duration
@@ -96,7 +98,7 @@ export const getServices = {
     const services = await Service.find({ barber: new mongoose.Types.ObjectId(uid) })
       .skip(parsedPage * pageSize)
       .limit(pageSize);
-      console.log("services", services)
+    console.log("services", services)
     res.json({
       ok: true,
       services,
