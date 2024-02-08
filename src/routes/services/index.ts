@@ -6,10 +6,10 @@ const router = Router();
 
 // router.post('/register', register.check, register.do)
 router.get("/", validateJWT, getServices.do);
-router.get("/:id", validateJWT, getBarberServices.do);
-
 router.post("/add", validateJWT, createService.do);
 router.put("/edit", validateJWT, editService.do);
+router.get("/:id", validateJWT, getBarberServices.do);
+
 // router.get('/me',validateJWT, me.do)
 
 export default router;
