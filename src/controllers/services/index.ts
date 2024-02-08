@@ -47,7 +47,7 @@ export const editService = {
     const { role, uid, files } = req;
     const { duration, price, description, name, id } = req.body;
 
-    const targetService = await Service.findById({ _id: id })
+    const targetService = await Service.findById(id)
     console.log("files.image", files?.image)
 
     if (!targetService) {
