@@ -45,9 +45,9 @@ export const editService = {
   check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
-    const { duration, price, description, name, serviceId } = req.body;
+    const { duration, price, description, name, id } = req.body;
 
-    const targetService = await Service.findById({ id: serviceId })
+    const targetService = await Service.findById({ id: id })
     console.log("files.image", files?.image)
 
     if (!targetService) {
@@ -71,7 +71,7 @@ export const editService = {
         error: "Error al subir la imagen, el servicio no se guardo.",
       });
     }
-
+    targetService.name = name
     targetService.duration = duration
     targetService.price = price
     targetService.description = description
