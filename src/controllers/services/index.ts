@@ -78,12 +78,18 @@ export const editService = {
     targetService.price = price
     targetService.description = description
 
-    await targetService.save();
-    console.log("service", targetService)
-    res.json({
-      ok: true,
-      targetService,
-    });
+    try {
+      await targetService.save();
+      console.log("service", targetService)
+      res.json({
+        ok: true,
+        targetService,
+      });
+      
+    } catch (error) {
+      console.log("error", error)
+      res.status(500).json({ok:false})
+    }
   },
 };
 
