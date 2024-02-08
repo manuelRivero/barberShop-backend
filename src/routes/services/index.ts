@@ -9,7 +9,7 @@ router.get("/", validateJWT, getServices.do);
 router.get("/:id", validateJWT, getBarberServices.do);
 
 router.post("/add", validateJWT, createService.do);
-router.post("/edit", validateJWT, editService.do);
+router.put("/edit", validateJWT, editService.do);
 // router.get('/me',validateJWT, me.do)
 
 export default router;
