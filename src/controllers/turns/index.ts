@@ -135,7 +135,7 @@ export const getTurns = {
             from: "users",
             localField: "user",
             foreignField: "_id",
-            as: "userData"
+            as: "user"
           }
         }
       ]);
