@@ -60,7 +60,47 @@ export const setTurns = {
   },
 };
 
+export const completeTurn = {
+  check: async (req: Request, res: Response, next: NextFunction) => { },
+  do: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const {id} = req.body;
 
+    const targetTurn = await Turn.findById(id)
+
+    if(!targetTurn){
+      res.json({ok:false, error:"Turno no encontrado"})
+    } else {
+      targetTurn.status = "COMPLETE"
+      await targetTurn?.save()
+      res.json({ok:true})
+    }
+
+  }}
+
+  export const cancelTurn = {
+    check: async (req: Request, res: Response, next: NextFunction) => { },
+    do: async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> => {
+      const {id} = req.body;
+  
+      const targetTurn = await Turn.findById(id)
+  
+      if(!targetTurn){
+        res.json({ok:false, error:"Turno no encontrado"})
+      } else {
+        targetTurn.status = "CANCELED"
+        await targetTurn?.save()
+        res.json({ok:true})
+      }
+  
+    }}
 // set $lte params to bussinessHourEnd 
 export const getTurns = {
   check: async (req: Request, res: Response, next: NextFunction) => { },
