@@ -10,11 +10,11 @@ declare global {
 }
 
 
-export interface OnlineBarber {
+export interface OnlineUsers{
   userId: string;
   socketId: string;
 }
 
-export interface SocketBarber {
+export interface SocketUsers {
   _id: string;
 }
