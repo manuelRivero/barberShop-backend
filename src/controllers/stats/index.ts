@@ -34,6 +34,7 @@ export const getThisWeekStats = async (
       },
       {
         $addFields: {
+          status:"$serviceData.status",
           day: { $dayOfMonth: "$endDate" },
           date: "$endDate",
         },
