@@ -34,7 +34,7 @@ export const getThisWeekStats = async (
       },
       {
         $addFields: {
-          status:"$serviceData.status",
+          status: "$serviceData.status",
           day: { $dayOfMonth: "$endDate" },
           date: "$endDate",
         },
@@ -44,7 +44,17 @@ export const getThisWeekStats = async (
           _id: "$day",
           date: { $first: "$date" },
           dayTotalServices: { $sum: 1 },
-          dayTotalAmount: { $sum: "$price" },
+          dayCompleteServices: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'COMPLETE'] }, 1, 0]
+            }
+          },
+          dayCanceledServices: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'CANCELED'] }, 1, 0]
+            }
+          },
+          dayTotalAmount: { $sum: { $cond: [{ $eq: ['$status', 'COMPLETE'] }, "$price", 0] } },
         },
       },
     ]);
