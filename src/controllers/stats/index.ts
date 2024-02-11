@@ -89,8 +89,9 @@ export const getAllStatsFromDates = async (req: Request, res: Response) => {
           name: { $first: "$barberData.name" },
           lastName: { $first: "$barberData.lastname" },
           commission: { $first: "$barberData.commission" },
-          totalTurns: { $sum: 1 },
-          total: { $sum: "$price" },
+          completeTurns: { $sum: {$cond:[{$eq:["$status", "COMPLETE"]}, 1, 0]} },
+          canceledTurns: { $sum: {$cond:[{$eq:["$status", "CANCELED"]}, 1, 0]} },
+          total: { $sum: {$cond:[{$eq:["$status", "COMPLETE"]}, "$price", 0]} },
         },
       },
       {
