@@ -65,7 +65,7 @@ const io = new Server(httpServer, { cors: { origin: "*" } });
 let onlineUsers: OnlineUsers[] = [];
 
 function findTargetUser(id: string): OnlineUsers | undefined {
-  return onlineUsers.find((barber: OnlineUsers) => barber.userId === id);
+  return onlineUsers.find((user: OnlineUsers) => user.userId === id);
 }
 
 
@@ -93,12 +93,14 @@ io.on("connection", (socket: any) => {
 
     const targetUser = findTargetUser(data.id);
     console.log("targetUser cancel turn", targetUser)
+    console.log("online users", onlineUsers)
     if (targetUser) {
       io.to(targetUser.socketId).emit("canceled-turn");
     }
   });
 
   socket.on("log-in", async (data: { user: SocketUsers}) => {
+
     await handleLogin(data, socket);
   });
 
