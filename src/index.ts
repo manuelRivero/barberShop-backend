@@ -89,6 +89,8 @@ io.on("connection", (socket: any) => {
   });
 
   socket.on("cancel-turn", (data: { id: string}) => {
+    console.log("targetUser cancel turn", data.id)
+
     const targetUser = findTargetUser(data.id);
     console.log("targetUser cancel turn", targetUser)
     if (targetUser) {
