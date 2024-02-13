@@ -95,7 +95,7 @@ io.on("connection", (socket: any) => {
     console.log("targetUser cancel turn", targetUser)
     console.log("online users", onlineUsers)
     if (targetUser) {
-      io.to(targetUser.socketId).emit("canceled-turn");
+      io.to(targetUser.socketId).emit("canceled-turn", {});
     }
   });
 
