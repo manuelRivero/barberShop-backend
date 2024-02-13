@@ -70,7 +70,7 @@ function findTargetUser(id: string): OnlineUsers | undefined {
 
 
 async function handleLogin({ user }: { user: SocketUsers }, socket:any): Promise<void> {
-  console.log("log-in");
+  console.log("log-in", user);
 
   // Add a delay to ensure the socket.on("log-in") event finishes processing before moving on
   await new Promise(resolve => setTimeout(resolve, 0));
@@ -100,7 +100,6 @@ io.on("connection", (socket: any) => {
   });
 
   socket.on("log-in", async (data: { user: SocketUsers}) => {
-
     await handleLogin(data, socket);
   });
 
