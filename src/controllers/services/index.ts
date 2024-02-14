@@ -24,7 +24,6 @@ export const createService = {
         { folder: "services" }
       );
       service.image = imageUrl.secure_url;
-      service.imageName = imageUrl.display_name
     } catch {
       return res.status(500).json({
         ok: false,
@@ -65,7 +64,7 @@ export const editService = {
           { folder: "services" }
         );
         targetService.image = imageUrl.secure_url;
-        targetService.imageName = imageUrl.display_name
+        targetService.imageId = imageUrl.public_id;
       } catch {
         return res.status(500).json({
           ok: false,

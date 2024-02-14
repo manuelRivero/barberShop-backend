@@ -195,3 +195,61 @@ export const facebookLogin = {
     });
   },
 };
+
+export const editProfile = {
+  check: async (req: Request, res: Response, next: NextFunction) => { },
+  do: async (req: Request, res: Response, next: NextFunction) => {
+    const { role, uid, files } = req;
+    const { name, lastname, phone = null, image } = req.body;
+
+    const targetUser = await User.findById(uid)
+
+    if (!targetUser) {
+      return res.status(404).json({
+        ok: false,
+        error: "No se encontró el usuario"
+      })
+    }
+
+    if (files?.image) {
+      try {
+        await cloudinary.uploader.destroy(image);
+      } catch (error) {
+        console.log("error", error);
+        res.status(400).json({ ok: false, error: "No se puedo eliminra la imagen" });
+      }
+
+      try {
+        const imageUrl = await cloudinary.uploader.upload(
+          // @ts-ignore
+          files.image.tempFilePath,
+          { folder: "users" }
+        );
+        targetUser.image = imageUrl.secure_url;
+        targetUser.imageId = imageUrl.public_id;
+      } catch {
+        return res.status(500).json({
+          ok: false,
+          error: "Error al subir la imagen, el usuario no se guardo.",
+        });
+      }
+    }
+
+    targetUser.name = name
+    targetUser.lastname = lastname
+    targetUser.phone = phone
+
+    try {
+      await targetUser.save();
+      console.log("User", targetUser)
+     return res.json({
+        ok: true,
+        targetUser,
+      });
+      
+    } catch (error) {
+      console.log("error", error)
+      res.status(500).json({ok:false})
+    }
+  },
+};

@@ -17,6 +17,10 @@ const User = new Schema(
     image: {
       type: String,
     },
+    imageId: {
+      type: String,
+      default: null,
+    },
     role: {
       type: String,
       default: "user",
@@ -35,6 +39,10 @@ const User = new Schema(
     },
     isActive:{
       type:Boolean
+    },
+    phone:{
+      type: String,
+      default: null,
     }
   },
   {
