@@ -132,7 +132,7 @@ export const refreshTokenFunc = {
       if (err) {
         console.log("jwt.verify", err)
         await Token.findOneAndRemove({ refreshToken })
-        return res.status(403).json({ok:false, error:"refresh token expirado"})
+        return res.status(403).json({ ok: false, error: "refresh token expirado" })
       };
       const accessToken = jwt.sign({ uid: user.uid, role: user.role }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "8h" });
       const generateRefreshToken = await generateRefreshJWT(user.uid, user.role)
@@ -167,7 +167,7 @@ export const facebookLogin = {
     );
     const { email, last_name, first_name } = await data.json();
 
-    const targetUser = await User.findOne({ email: {$regex: email, $options: 'i'} });
+    const targetUser = await User.findOne({ email: { $regex: email, $options: 'i' } });
     if (!targetUser) {
       // register user
       console.log("register case");
@@ -212,11 +212,13 @@ export const editProfile = {
     }
 
     if (files?.image) {
-      try {
-        await cloudinary.uploader.destroy(image);
-      } catch (error) {
-        console.log("error", error);
-        res.status(400).json({ ok: false, error: "No se puedo eliminra la imagen" });
+      if (image) {
+        try {
+          await cloudinary.uploader.destroy(image);
+        } catch (error) {
+          console.log("error", error);
+          res.status(400).json({ ok: false, error: "No se puedo eliminra la imagen" });
+        }
       }
 
       try {
@@ -242,14 +244,14 @@ export const editProfile = {
     try {
       await targetUser.save();
       console.log("User", targetUser)
-     return res.json({
+      return res.json({
         ok: true,
         targetUser,
       });
-      
+
     } catch (error) {
       console.log("error", error)
-      res.status(500).json({ok:false})
+      res.status(500).json({ ok: false })
     }
   },
 };
