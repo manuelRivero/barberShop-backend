@@ -200,7 +200,7 @@ export const editProfile = {
   check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
-    const { name, lastname, phone = null, image } = req.body;
+    const { name, lastname, phone = null, imageForDelete } = req.body;
 
     const targetUser = await User.findById(uid)
 
@@ -212,9 +212,9 @@ export const editProfile = {
     }
 
     if (files?.image) {
-      if (image) {
+      if (imageForDelete) {
         try {
-          await cloudinary.uploader.destroy(image);
+          await cloudinary.uploader.destroy(imageForDelete);
         } catch (error) {
           console.log("error", error);
           res.status(400).json({ ok: false, error: "No se puedo eliminra la imagen" });
@@ -227,8 +227,8 @@ export const editProfile = {
           files.image.tempFilePath,
           { folder: "users" }
         );
-        targetUser.image = imageUrl.secure_url;
-        targetUser.imageId = imageUrl.public_id;
+        targetUser.avatar = imageUrl.secure_url;
+        targetUser.avatarId = imageUrl.public_id;
       } catch {
         return res.status(500).json({
           ok: false,

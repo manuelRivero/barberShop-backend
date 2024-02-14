@@ -14,10 +14,10 @@ const User = new Schema(
     email: {
       type: String,
     },
-    image: {
+    avatar: {
       type: String,
     },
-    imageId: {
+    avatarId: {
       type: String,
       default: null,
     },
