@@ -37,10 +37,10 @@ export const getBarberDetail = async (req: Request, res: Response) => {
             name: 1,
             lastname: 1,
             email: 1,
-            image: 1,
             role: 1,
             bio: 1,
             commission: 1,
+            avatar: 1,
             isActive: 1,
         }
     }]);
