@@ -15,7 +15,7 @@ export const getBarbers = {
         }
         const barbers = await user.aggregate([{
             $match: {
-                $and: [{$or: [{ role: "barber" }, { role: "admin-barber" }]}, match],
+                $and: [{ $or: [{ role: "barber" }, { role: "admin-barber" }] }, match],
                 _id: { $ne: new mongoose.Types.ObjectId(uid) }
             }
         }]);
@@ -41,6 +41,7 @@ export const getBarberDetail = async (req: Request, res: Response) => {
             role: 1,
             bio: 1,
             commission: 1,
+            isActive: 1,
         }
     }]);
     console.log("barbers", barber);
@@ -51,33 +52,17 @@ export const getBarberDetail = async (req: Request, res: Response) => {
 }
 
 export const disableBarber = async (req: Request, res: Response) => {
-    const { barber, from, to } = req.body;
+    const { barber, } = req.body;
     const targetBarber = await user.findById(new mongoose.Types.ObjectId(barber));
 
     if (!targetBarber) {
         return res.status(400).json({ ok: false, message: "Barbero no encontrado" })
     } else {
-
-        schedule.scheduleJob(moment(from, "DD/MM/yyyy").set("hours", 0).set("minutes", 0).toDate(), function () {
-            const saveStatus = async () => {
-                targetBarber.isActive = false
-                await targetBarber.save()
-            }
-            saveStatus()
-        });
-
-        schedule.scheduleJob(moment(to, "DD/MM/yyyy").set("hours", 0).set("minutes", 0).toDate(), function () {
-            console.log("schedule execution")
-            const saveStatus = async () => {
-                targetBarber.isActive = true
-                await targetBarber.save()
-
-            }
-            saveStatus()
-        });
+        targetBarber.isActive = !targetBarber.isActive
+        console.log("Save barber active:", targetBarber.isActive);
+        await targetBarber.save()
 
         return res.status(200).json({ ok: true })
-
     }
 
 }
