@@ -62,6 +62,8 @@ export const disableBarber = async (req: Request, res: Response) => {
 
         await targetBarber.save()
         const targetOnlineBarber = onlineUsers.find( user => user.userId === targetBarber._id.toString())
+        console.log("targetOnlineBarber", targetOnlineBarber)
+        console.log("onlineUsers", onlineUsers)
         if(targetOnlineBarber){
             io.to(targetOnlineBarber.socketId).emit("status-change", {status: targetBarber.isActive})
         }
