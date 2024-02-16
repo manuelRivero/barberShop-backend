@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Turn from "../../models/turns";
 import mongoose from "mongoose";
 import moment from 'moment-timezone';
+import User from "../../models/user";
 
 export const setTurns = {
   check: async (req: Request, res: Response, next: NextFunction) => { },
@@ -12,8 +13,18 @@ export const setTurns = {
   ): Promise<void> => {
     const { role, uid } = req;
     const { startDate, endDate, type, barber, price, name } = req.body;
-    // check turn availability
-    console.log("dates set turn");
+    // check barber availability
+    const targetBarber = await User.findById(barber)
+
+    if (!targetBarber){
+      res.status(404).json({ok:false, error: "Barbero no encontrado"})
+    }
+    if(targetBarber && !targetBarber.isActive){
+      res.status(404).json({ok:false, error: "Barbero no disponible"})
+
+    }
+      // check turn availability
+      console.log("dates set turn");
     const targetTurn = await Turn.aggregate([
       {
         $match: {

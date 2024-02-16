@@ -58,11 +58,11 @@ dbConnection();
 
 const httpServer = http.createServer(app);
 
-const io = new Server(httpServer, { cors: { origin: "*" } });
+export const io = new Server(httpServer, { cors: { origin: "*" } });
 
 
 
-let onlineUsers: OnlineUsers[] = [];
+export let onlineUsers: OnlineUsers[] = [];
 
 function findTargetUser(id: string): OnlineUsers | undefined {
   return onlineUsers.find((user: OnlineUsers) => user.userId === id);
@@ -110,3 +110,4 @@ io.on("connection", (socket: any) => {
 
 
 httpServer.listen(4000)
+

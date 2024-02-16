@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import user from "../../models/user";
 import mongoose, { set } from "mongoose";
-import schedule from "node-schedule"
-import moment from "moment";
+import { io, onlineUsers } from "../..";
 
 export const getBarbers = {
     do: async (req: Request, res: Response) => {
@@ -60,7 +59,12 @@ export const disableBarber = async (req: Request, res: Response) => {
     } else {
         targetBarber.isActive = !targetBarber.isActive
         console.log("Save barber active:", targetBarber.isActive);
+
         await targetBarber.save()
+        const targetOnlineBarber = onlineUsers.find( user => user.userId === targetBarber._id.toString())
+        if(targetOnlineBarber){
+            io.to(targetOnlineBarber.socketId).emit("status-change", {status: targetBarber.isActive})
+        }
 
         return res.status(200).json({ ok: true })
     }
