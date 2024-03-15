@@ -206,11 +206,11 @@ export const getTurnDetail = {
 export const getActiveTurn = {
   do: async (req: Request, res: Response): Promise<void> => {
     const { uid } = req
-    console.log("date", moment.tz('America/Argentina/Buenos_Aires')
-      .set({ hour: 0, minutes: 0 }))
+    
     const turn = await Turn.aggregate([
       {
         $match: {
+          status:{$ne: "CANCELED"},
           user: new mongoose.Types.ObjectId(uid),
           endDate: {
             $gte: moment.tz('America/Argentina/Buenos_Aires')
