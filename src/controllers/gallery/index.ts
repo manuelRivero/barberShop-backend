@@ -76,9 +76,9 @@ export const getImagesFromBarber = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { barber } = req.query;
+  const { id } = req.params;
   const images = await Gallery.aggregate([
-    { $match: { barber: new mongoose.Types.ObjectId(barber as string) } },
+    { $match: { barber: new mongoose.Types.ObjectId(id as string) } },
   ]);
 
   res.json({ data: images });

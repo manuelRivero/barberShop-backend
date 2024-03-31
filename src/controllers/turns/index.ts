@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Turn from "../../models/turns";
 import mongoose from "mongoose";
 import moment from 'moment-timezone';
+import User from "../../models/user";
 
 export const setTurns = {
   check: async (req: Request, res: Response, next: NextFunction) => { },
@@ -12,8 +13,18 @@ export const setTurns = {
   ): Promise<void> => {
     const { role, uid } = req;
     const { startDate, endDate, type, barber, price, name } = req.body;
-    // check turn availability
-    console.log("dates set turn");
+    // check barber availability
+    const targetBarber = await User.findById(barber)
+
+    if (!targetBarber){
+      res.status(404).json({ok:false, error: "Barbero no encontrado"})
+    }
+    if(targetBarber && !targetBarber.isActive){
+      res.status(404).json({ok:false, error: "Barbero no disponible"})
+
+    }
+      // check turn availability
+      console.log("dates set turn");
     const targetTurn = await Turn.aggregate([
       {
         $match: {
@@ -60,7 +71,49 @@ export const setTurns = {
   },
 };
 
+export const completeTurn = {
+  check: async (req: Request, res: Response, next: NextFunction) => { },
+  do: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const { id } = req.body;
 
+    const targetTurn = await Turn.findById(id)
+
+    if (!targetTurn) {
+      res.json({ ok: false, error: "Turno no encontrado" })
+    } else {
+      targetTurn.status = "COMPLETE"
+      await targetTurn?.save()
+      res.json({ ok: true })
+    }
+
+  }
+}
+
+export const cancelTurn = {
+  check: async (req: Request, res: Response, next: NextFunction) => { },
+  do: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const { id } = req.body;
+
+    const targetTurn = await Turn.findById(id)
+
+    if (!targetTurn) {
+      res.json({ ok: false, error: "Turno no encontrado" })
+    } else {
+      targetTurn.status = "CANCELED"
+      await targetTurn?.save()
+      res.json({ ok: true })
+    }
+
+  }
+}
 // set $lte params to bussinessHourEnd 
 export const getTurns = {
   check: async (req: Request, res: Response, next: NextFunction) => { },
@@ -86,7 +139,16 @@ export const getTurns = {
                 .toDate(),
             },
           },
+
         },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user"
+          }
+        }
       ]);
       console.log("turns", turns);
       res.status(200).json({
@@ -144,11 +206,11 @@ export const getTurnDetail = {
 export const getActiveTurn = {
   do: async (req: Request, res: Response): Promise<void> => {
     const { uid } = req
-    console.log("date", moment.tz('America/Argentina/Buenos_Aires')
-      .set({ hour: 0, minutes: 0 }))
+    
     const turn = await Turn.aggregate([
       {
         $match: {
+          status:{$ne: "CANCELED"},
           user: new mongoose.Types.ObjectId(uid),
           endDate: {
             $gte: moment.tz('America/Argentina/Buenos_Aires')

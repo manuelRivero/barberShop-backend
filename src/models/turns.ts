@@ -16,7 +16,11 @@ const Turn = new Schema(
     },
     name:{
       type:String
-    }
+    },
+    status:{
+      type: String,
+      default: "INCOMPLETE",
+    },
   },
   {
     collection: "turns",

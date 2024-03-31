@@ -18,9 +18,10 @@ const Service = new Schema(
     image:{
         type:String
     },
-    imageName:{
-      type:String
-    }
+    imageId:{
+        type:String,
+        default: null,
+    },
   },
   {
     collection: "services",

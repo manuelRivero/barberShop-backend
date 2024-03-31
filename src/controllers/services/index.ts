@@ -4,7 +4,7 @@ import Service from "../../models/services";
 import mongoose from "mongoose";
 
 export const createService = {
-  check: async (req: Request, res: Response, next: NextFunction) => {},
+  check: async (req: Request, res: Response, next: NextFunction) => { },
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
     const { duration, price, description, name } = req.body;
@@ -24,7 +24,6 @@ export const createService = {
         { folder: "services" }
       );
       service.image = imageUrl.secure_url;
-      service.imageName = imageUrl.display_name
     } catch {
       return res.status(500).json({
         ok: false,
@@ -41,6 +40,58 @@ export const createService = {
   },
 };
 
+export const editService = {
+  check: async (req: Request, res: Response, next: NextFunction) => { },
+  do: async (req: Request, res: Response, next: NextFunction) => {
+    const { role, uid, files } = req;
+    const { duration, price, description, name, id } = req.body;
+
+    const targetService = await Service.findById(id)
+    console.log("files.image", files?.image)
+
+    if (!targetService) {
+      return res.status(404).json({
+        ok: false,
+        error: "No se encontró el servicio"
+      })
+    }
+
+    if (files?.image) {
+      try {
+        const imageUrl = await cloudinary.uploader.upload(
+          // @ts-ignore
+          files.image.tempFilePath,
+          { folder: "services" }
+        );
+        targetService.image = imageUrl.secure_url;
+        targetService.imageId = imageUrl.public_id;
+      } catch {
+        return res.status(500).json({
+          ok: false,
+          error: "Error al subir la imagen, el servicio no se guardo.",
+        });
+      }
+    }
+    targetService.name = name
+    targetService.duration = duration
+    targetService.price = price
+    targetService.description = description
+
+    try {
+      await targetService.save();
+      console.log("service", targetService)
+     return res.json({
+        ok: true,
+        targetService,
+      });
+      
+    } catch (error) {
+      console.log("error", error)
+      res.status(500).json({ok:false})
+    }
+  },
+};
+
 export const getServices = {
   do: async (req: Request, res: Response) => {
     console.log("service controller")
@@ -52,7 +103,7 @@ export const getServices = {
     const services = await Service.find({ barber: new mongoose.Types.ObjectId(uid) })
       .skip(parsedPage * pageSize)
       .limit(pageSize);
-      console.log("services", services)
+    console.log("services", services)
     res.json({
       ok: true,
       services,

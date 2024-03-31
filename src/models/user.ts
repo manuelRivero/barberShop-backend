@@ -14,8 +14,12 @@ const User = new Schema(
     email: {
       type: String,
     },
-    image: {
+    avatar: {
       type: String,
+    },
+    avatarId: {
+      type: String,
+      default: null,
     },
     role: {
       type: String,
@@ -32,6 +36,13 @@ const User = new Schema(
     score:{
       type:Number,
       default: 5,
+    },
+    isActive:{
+      type:Boolean
+    },
+    phone:{
+      type: String,
+      default: null,
     }
   },
   {

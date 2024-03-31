@@ -78,7 +78,7 @@ export const login = {
     console.log("login");
     const { email, password } = req.body;
     console.log("email", email, "password", password)
-    const targetUser = await User.findOne({ email });
+    const targetUser = await User.findOne({ email: { $regex: new RegExp("^" + email.toLowerCase(), "i") } });
     const targetRefreshToken = await Token.findOne({ user: targetUser })
     console.log("Target user", targetUser)
     if (!targetUser) {
@@ -132,7 +132,7 @@ export const refreshTokenFunc = {
       if (err) {
         console.log("jwt.verify", err)
         await Token.findOneAndRemove({ refreshToken })
-        return res.status(403).json({ok:false, error:"refresh token expirado"})
+        return res.status(403).json({ ok: false, error: "refresh token expirado" })
       };
       const accessToken = jwt.sign({ uid: user.uid, role: user.role }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "8h" });
       const generateRefreshToken = await generateRefreshJWT(user.uid, user.role)
@@ -167,7 +167,7 @@ export const facebookLogin = {
     );
     const { email, last_name, first_name } = await data.json();
 
-    const targetUser = await User.findOne({ email });
+    const targetUser = await User.findOne({ email: { $regex: email, $options: 'i' } });
     if (!targetUser) {
       // register user
       console.log("register case");
@@ -193,5 +193,65 @@ export const facebookLogin = {
       ok: true,
       token,
     });
+  },
+};
+
+export const editProfile = {
+  check: async (req: Request, res: Response, next: NextFunction) => { },
+  do: async (req: Request, res: Response, next: NextFunction) => {
+    const { role, uid, files } = req;
+    const { name, lastname, phone = null, imageForDelete } = req.body;
+
+    const targetUser = await User.findById(uid)
+
+    if (!targetUser) {
+      return res.status(404).json({
+        ok: false,
+        error: "No se encontró el usuario"
+      })
+    }
+
+    if (files?.image) {
+      if (imageForDelete) {
+        try {
+          await cloudinary.uploader.destroy(imageForDelete);
+        } catch (error) {
+          console.log("error", error);
+          res.status(400).json({ ok: false, error: "No se puedo eliminra la imagen" });
+        }
+      }
+
+      try {
+        const imageUrl = await cloudinary.uploader.upload(
+          // @ts-ignore
+          files.image.tempFilePath,
+          { folder: "users" }
+        );
+        targetUser.avatar = imageUrl.secure_url;
+        targetUser.avatarId = imageUrl.public_id;
+      } catch {
+        return res.status(500).json({
+          ok: false,
+          error: "Error al subir la imagen, el usuario no se guardo.",
+        });
+      }
+    }
+
+    targetUser.name = name
+    targetUser.lastname = lastname
+    targetUser.phone = phone
+
+    try {
+      await targetUser.save();
+      console.log("User", targetUser)
+      return res.json({
+        ok: true,
+        targetUser,
+      });
+
+    } catch (error) {
+      console.log("error", error)
+      res.status(500).json({ ok: false })
+    }
   },
 };

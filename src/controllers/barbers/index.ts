@@ -1,13 +1,20 @@
 import { NextFunction, Request, Response } from "express";
 import user from "../../models/user";
-import mongoose from "mongoose";
+import mongoose, { set } from "mongoose";
+import { io, onlineUsers } from "../..";
 
 export const getBarbers = {
     do: async (req: Request, res: Response) => {
         const { uid } = req
+        const { isAdmin } = req.query
+        let match: any = {}
+
+        if (!isAdmin) {
+            match = { isActive: true }
+        }
         const barbers = await user.aggregate([{
             $match: {
-                $or: [{ role: "barber" }, { role: "admin-barber" }],
+                $and: [{ $or: [{ role: "barber" }, { role: "admin-barber" }] }, match],
                 _id: { $ne: new mongoose.Types.ObjectId(uid) }
             }
         }]);
@@ -29,10 +36,11 @@ export const getBarberDetail = async (req: Request, res: Response) => {
             name: 1,
             lastname: 1,
             email: 1,
-            image: 1,
             role: 1,
             bio: 1,
             commission: 1,
+            avatar: 1,
+            isActive: 1,
         }
     }]);
     console.log("barbers", barber);
@@ -42,3 +50,25 @@ export const getBarberDetail = async (req: Request, res: Response) => {
     });
 }
 
+export const disableBarber = async (req: Request, res: Response) => {
+    const { barber, } = req.body;
+    const targetBarber = await user.findById(new mongoose.Types.ObjectId(barber));
+
+    if (!targetBarber) {
+        return res.status(400).json({ ok: false, message: "Barbero no encontrado" })
+    } else {
+        targetBarber.isActive = !targetBarber.isActive
+        console.log("Save barber active:", targetBarber.isActive);
+
+        await targetBarber.save()
+        const targetOnlineBarber = onlineUsers.find( user => user.userId === targetBarber._id.toString())
+        console.log("targetOnlineBarber", targetOnlineBarber)
+        console.log("onlineUsers", onlineUsers)
+        if(targetOnlineBarber){
+            io.to(targetOnlineBarber.socketId).emit("status-change", {status: targetBarber.isActive})
+        }
+
+        return res.status(200).json({ ok: true })
+    }
+
+}
