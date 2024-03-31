@@ -28,6 +28,7 @@
     "moment-timezone": "^0.5.44",
     "mongoose": "^7.4.2",
     "rand-token": "^1.0.1",
+    "redis": "^4.6.13",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {

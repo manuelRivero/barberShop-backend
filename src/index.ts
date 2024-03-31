@@ -16,11 +16,7 @@ import galleryRoutes from "./routes/gallery/index";
 
 import { errorHandler } from "./middleware/errorHandler/error-handler";
 import cookieParser from "cookie-parser";
-import { OnlineBarber, SocketBarber } from "./types/express";
-const { Server } = require("socket.io");
-
-
-
+import { socketHandler } from "./socket";
 
 const app: Application = express();
 
@@ -58,45 +54,7 @@ dbConnection();
 
 const httpServer = http.createServer(app);
 
-const io = new Server(httpServer, { cors: { origin: "*" } });
-
-
-
-let onlineBarbers: OnlineBarber[] = [];
-
-function findTargetBarber(barberId: string): OnlineBarber | undefined {
-  return onlineBarbers.find((barber: OnlineBarber) => barber.userId === barberId);
-}
-
-async function handleLogin({ user }: { user: SocketBarber }, socket:any): Promise<void> {
-  console.log("log-in");
-
-  // Add a delay to ensure the socket.on("log-in") event finishes processing before moving on
-  await new Promise(resolve => setTimeout(resolve, 0));
-
-  const newBarberList = onlineBarbers.filter((barber: OnlineBarber) => barber.userId !== user._id);
-  newBarberList.push({ userId: user._id, socketId: socket.id });
-  onlineBarbers = newBarberList;
-  console.log("online-barbers", onlineBarbers)
-}
-
-io.on("connection", (socket: any) => {
-  socket.on("set-turn", (data: { barber: SocketBarber; turnData: any }) => {
-    const targetBarber = findTargetBarber(data.barber._id);
-    if (targetBarber) {
-      io.to(targetBarber.socketId).emit("add-turn", { data: data.turnData });
-    }
-  });
-
-  socket.on("log-in", async (data: { user: SocketBarber}) => {
-    await handleLogin(data, socket);
-  });
-
-  socket.on("remove-online-barber", (data: { user: SocketBarber}) => {
-    onlineBarbers = onlineBarbers.filter((barber: OnlineBarber) => barber.userId !== data.user._id);
-    console.log("online barbers", onlineBarbers);
-  });
-});
-
 
 httpServer.listen(4000)
+
+socketHandler(httpServer)
