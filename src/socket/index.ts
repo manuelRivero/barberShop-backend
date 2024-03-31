@@ -5,7 +5,7 @@ import { createClient } from "redis";
 import { OnlineUser, SocketUser } from "../types/express";
 import { findTargetUser, handleLogin, handleLogout } from "./helpers";
 
-const redisClient = createClient();
+export const redisClient = createClient();
 
 redisClient
   .on("error", (err) => console.log("Redis Client Error", err))

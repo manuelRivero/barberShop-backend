@@ -57,4 +57,4 @@ const httpServer = http.createServer(app);
 
 httpServer.listen(4000)
 
-socketHandler(httpServer)
+export const io = socketHandler(httpServer)
