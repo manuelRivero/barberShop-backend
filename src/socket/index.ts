@@ -6,7 +6,7 @@ import { SocketUser } from "../types/express";
 import { findTargetUser, handleLogin, handleLogout } from "./helpers";
 
 export const redisClient = createClient({
-    password: process.env.REDIS_PASSWORD,
+    password: `${process.env.REDIS_PASSWORD}`,
     socket: {
         host: process.env.REDIS_HOST,
         port: 12778

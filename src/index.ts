@@ -1,10 +1,11 @@
+import './env.ts';
+
 import express, { Application } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
 import http from "http";
 import { dbConnection } from "./db/index";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth/index";
 import turnsRoutes from "./routes/turns/index";
 import servicesRoutes from "./routes/services/index";
@@ -13,14 +14,12 @@ import statsRoutes from "./routes/stats/index";
 import reviewsRoutes from "./routes/reviews/index";
 import galleryRoutes from "./routes/gallery/index";
 
-
 import { errorHandler } from "./middleware/errorHandler/error-handler";
 import cookieParser from "cookie-parser";
 import { socketHandler } from "./socket";
 
 const app: Application = express();
 
-dotenv.config();
 const corsOptions = {
   //To allow requests from client
   origin: "*",
