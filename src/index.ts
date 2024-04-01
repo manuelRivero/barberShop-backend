@@ -1,4 +1,4 @@
-import './env.ts';
+import './env';
 
 import express, { Application } from "express";
 import cors from "cors";
