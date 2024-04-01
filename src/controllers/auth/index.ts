@@ -127,14 +127,14 @@ export const refreshTokenFunc = {
     if (targetToken === null) return res.sendStatus(403);
 
 
-    jwt.verify(refreshToken, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, async (err: any, user: any) => {
+    jwt.verify(refreshToken, `${process.env.SECRETORPRIVATEKEY}`, async (err: any, user: any) => {
 
       if (err) {
         console.log("jwt.verify", err)
         await Token.findOneAndRemove({ refreshToken })
         return res.status(403).json({ ok: false, error: "refresh token expirado" })
       };
-      const accessToken = jwt.sign({ uid: user.uid, role: user.role }, `${process.env.REFRESH_SECRETORPRIVATEKEY}`, { expiresIn: "8h" });
+      const accessToken = jwt.sign({ uid: user.uid, role: user.role }, `${process.env.SECRETORPRIVATEKEY}`, { expiresIn: "8h" });
       const generateRefreshToken = await generateRefreshJWT(user.uid, user.role)
 
       targetToken.user = user.uid
