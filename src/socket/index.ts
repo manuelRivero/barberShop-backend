@@ -55,9 +55,3 @@ export const socketHandler = (server: Server): SocketIOServer => {
 
   return io;
 };
-
-(async () => {
-  // disconnect to redis server
-  await redisClient.quit();
-
-})();
