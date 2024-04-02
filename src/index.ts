@@ -16,7 +16,7 @@ import galleryRoutes from "./routes/gallery/index";
 
 import { errorHandler } from "./middleware/errorHandler/error-handler";
 import cookieParser from "cookie-parser";
-import { socketHandler } from "./socket";
+import { redisClient, socketHandler } from "./socket";
 
 const app: Application = express();
 
@@ -55,5 +55,9 @@ const httpServer = http.createServer(app);
 
 
 httpServer.listen(4000)
+
+process.on("exit", function(){
+  redisClient.quit();
+});
 
 export const io = socketHandler(httpServer)
