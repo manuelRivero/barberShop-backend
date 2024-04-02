@@ -48,11 +48,16 @@ export const socketHandler = (server: Server): SocketIOServer => {
     });
   });
 
-  io.on("disconnect", () => {
-    redisClient.quit();
+  io.on("disconnect", async () => {
+    await redisClient.quit();
 
   })
 
   return io;
 };
 
+(async () => {
+  // disconnect to redis server
+  await redisClient.quit();
+
+})();
