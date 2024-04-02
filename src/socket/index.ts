@@ -15,7 +15,8 @@ export const redisClient = createClient({
 
 (async () => {
   // Connect to redis server
-  
+  await redisClient.connect();
+
 })();
 
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
@@ -25,7 +26,6 @@ export const socketHandler = (server: Server): SocketIOServer => {
   const io = new SocketIOServer(server);
 
   io.on("connection", async (socket: Socket): Promise<void> => {
-      await redisClient.connect();
 
     socket.on(
       "set-turn",
