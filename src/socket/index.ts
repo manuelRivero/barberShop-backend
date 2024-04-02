@@ -43,7 +43,7 @@ export const socketHandler = (server: Server): SocketIOServer => {
       await handleLogin(data, socket, redisClient);
     });
 
-    socket.on("remove-online-barber", (data: { user: SocketUser }) => {
+    socket.on("remove-online-user", (data: { user: SocketUser }) => {
       handleLogout(data.user, redisClient);
     });
   });
