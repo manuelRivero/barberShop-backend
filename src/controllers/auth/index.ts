@@ -95,7 +95,7 @@ export const login = {
         });
       }
       const token = await generatejWT(targetUser._id.toString(), targetUser.role);
-      const refreshToken = await generateRefreshJWT(targetUser._id, targetUser.role)
+      const refreshToken = await generateRefreshJWT(targetUser._id.toString(), targetUser.role)
 
       if (targetRefreshToken) {
         await targetRefreshToken.deleteOne()
