@@ -2,12 +2,19 @@ import cloudinary from "../../helpers/imageUpload/index";
 import { NextFunction, Request, Response } from "express";
 import Service from "../../models/services";
 import mongoose from "mongoose";
+import { UploadedFile } from "express-fileupload";
 
 export const createService = {
   check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (req: Request, res: Response, next: NextFunction) => {
-    const { role, uid, files } = req;
+    const { role, uid } = req;
     const { duration, price, description, name } = req.body;
+    const images: UploadedFile | UploadedFile[] | undefined = req.files?.image;
+
+    if(!images){
+      return res.status(400).send('No files were uploaded.');
+    }
+
 
     const service = new Service({
       duration,
@@ -16,12 +23,11 @@ export const createService = {
       name,
       barber: uid,
     });
-    console.log("files.image", files?.image);
 
-    if (files) {
-      Object.values(files);
-      for (let element of Object.values(files)) {
-        console.log("image element", element)
+    const imagesArray: UploadedFile[] = Array.isArray(images) ? images : [images];
+
+    if (images) {
+      imagesArray?.forEach(async (element)=> {
         try {
           const imageUrl = await cloudinary.uploader.upload(
             // @ts-ignore
@@ -36,7 +42,8 @@ export const createService = {
           });
         }
       }
-    }
+    )
+  }
     await service.save();
     console.log("service", service);
     res.json({
@@ -51,6 +58,8 @@ export const editService = {
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
     const { duration, price, description, name, id } = req.body;
+    const images: UploadedFile | UploadedFile[] | undefined = req.files?.image;
+    
 
     const targetService = await Service.findById(id);
     console.log("files.image", files?.image);
@@ -62,9 +71,9 @@ export const editService = {
       });
     }
 
-    if (files) {
-      Object.values(files);
-      for (let element of Object.values(files)) {
+    if(images){
+      const imagesArray: UploadedFile[] = Array.isArray(images) ? images : [images];
+      imagesArray?.forEach(async (element)=> {
         try {
           const imageUrl = await cloudinary.uploader.upload(
             // @ts-ignore
@@ -79,6 +88,8 @@ export const editService = {
           });
         }
       }
+    )
+
     }
     targetService.name = name;
     targetService.duration = duration;
