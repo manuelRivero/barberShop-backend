@@ -27,7 +27,7 @@ export const createService = {
             element.tempFilePath,
             { folder: "services" }
           );
-          service.image = imageUrl.secure_url;
+          service.images.push(imageUrl.secure_url)
         } catch {
           return res.status(500).json({
             ok: false,
