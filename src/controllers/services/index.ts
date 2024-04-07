@@ -21,6 +21,7 @@ export const createService = {
     if (files) {
       Object.values(files);
       for (let element of Object.values(files)) {
+        console.log("image element", element)
         try {
           const imageUrl = await cloudinary.uploader.upload(
             // @ts-ignore
