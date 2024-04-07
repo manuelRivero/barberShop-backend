@@ -70,7 +70,7 @@ export const editService = {
             element.tempFilePath,
             { folder: "services" }
           );
-          service.images.push(imageUrl.secure_url)
+          targetService.images.push(imageUrl.secure_url)
         } catch {
           return res.status(500).json({
             ok: false,
