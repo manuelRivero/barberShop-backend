@@ -39,7 +39,10 @@ export const createService = {
       try {
         const uploadResponses = await Promise.all(uploadPromises);
         uploadResponses.forEach((element: any) => {
-          service.images.push(element.secure_url);
+          service.images.push({
+            url: element.secure_url,
+            publicId: element.public_id,
+          });
         });
       } catch {
         return res.status(500).json({
@@ -61,7 +64,7 @@ export const editService = {
   check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
-    const { duration, price, description, name, id } = req.body;
+    const { duration, price, description, name, id, imagesForDelete } = req.body;
     const images: UploadedFile | UploadedFile[] | undefined = req.files?.image;
 
     const targetService = await Service.findById(id);
@@ -89,7 +92,10 @@ export const editService = {
       try {
         const uploadResponses = await Promise.all(uploadPromises);
         uploadResponses.forEach((element: any) => {
-          targetService.images.push(element.secure_url);
+          targetService.images.push({
+            url: element.secure_url,
+            publicId: element.public_id,
+          });
         });
       } catch {
         return res.status(500).json({
@@ -97,6 +103,16 @@ export const editService = {
           error: "Error al subir la imagen, el servicio no se guardo.",
         });
       }
+    }
+    if (imagesForDelete){
+
+      const deletePromises = imagesForDelete?.map( (element: any) => {
+        targetService.images = targetService.images.filter( e => e.publicId !== element)
+        return cloudinary.uploader.destroy(element);
+        
+      })
+
+      await Promise.all(deletePromises);
     }
     targetService.name = name;
     targetService.duration = duration;

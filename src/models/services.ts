@@ -2,25 +2,32 @@ import { Schema, model } from "mongoose";
 
 const Service = new Schema(
   {
-    barber:{ type: Schema.Types.ObjectId, ref: "User" },
-    name:{
-        type:String
+    barber: { type: Schema.Types.ObjectId, ref: "User" },
+    name: {
+      type: String,
     },
-    duration:{
-        type:Number
+    duration: {
+      type: Number,
     },
-    description:{
-        type:String
+    description: {
+      type: String,
     },
-    price:{
-        type:String
+    price: {
+      type: String,
     },
-    images:[{
-        type:String
-    }],
-    imageId:{
-        type:String,
-        default: null,
+    images: [
+      {
+        url: {
+          type: String,
+        },
+        publicId: {
+          type: String,
+        },
+      },
+    ],
+    imageId: {
+      type: String,
+      default: null,
     },
   },
   {
