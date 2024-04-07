@@ -61,20 +61,22 @@ export const editService = {
       });
     }
 
-    if (files?.image) {
-      try {
-        const imageUrl = await cloudinary.uploader.upload(
-          // @ts-ignore
-          files.image.tempFilePath,
-          { folder: "services" }
-        );
-        targetService.image = imageUrl.secure_url;
-        targetService.imageId = imageUrl.public_id;
-      } catch {
-        return res.status(500).json({
-          ok: false,
-          error: "Error al subir la imagen, el servicio no se guardo.",
-        });
+    if (files) {
+      Object.values(files);
+      for (let element of Object.values(files)) {
+        try {
+          const imageUrl = await cloudinary.uploader.upload(
+            // @ts-ignore
+            element.tempFilePath,
+            { folder: "services" }
+          );
+          service.images.push(imageUrl.secure_url)
+        } catch {
+          return res.status(500).json({
+            ok: false,
+            error: "Error al subir la imagen, el servicio no se guardo.",
+          });
+        }
       }
     }
     targetService.name = name;
