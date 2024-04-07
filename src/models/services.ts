@@ -15,9 +15,9 @@ const Service = new Schema(
     price:{
         type:String
     },
-    image:{
+    images:[{
         type:String
-    },
+    }],
     imageId:{
         type:String,
         default: null,
