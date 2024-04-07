@@ -11,10 +11,9 @@ export const createService = {
     const { duration, price, description, name } = req.body;
     const images: UploadedFile | UploadedFile[] | undefined = req.files?.image;
 
-    if(!images){
-      return res.status(400).send('No files were uploaded.');
+    if (!images) {
+      return res.status(400).send("No files were uploaded.");
     }
-
 
     const service = new Service({
       duration,
@@ -24,26 +23,31 @@ export const createService = {
       barber: uid,
     });
 
-    const imagesArray: UploadedFile[] = Array.isArray(images) ? images : [images];
+    const imagesArray: UploadedFile[] = Array.isArray(images)
+      ? images
+      : [images];
 
     if (images) {
-      imagesArray?.forEach(async (element)=> {
-        try {
-          const imageUrl = await cloudinary.uploader.upload(
-            // @ts-ignore
-            element.tempFilePath,
-            { folder: "services" }
-          );
-          service.images.push(imageUrl.secure_url)
-        } catch {
-          return res.status(500).json({
-            ok: false,
-            error: "Error al subir la imagen, el servicio no se guardo.",
-          });
-        }
+      const uploadPromises = imagesArray?.map(async (element) => {
+        return await cloudinary.uploader.upload(
+          // @ts-ignore
+          element.tempFilePath,
+          { folder: "services" }
+        );
+      });
+
+      try {
+        const uploadResponses = await Promise.all(uploadPromises);
+        uploadResponses.forEach((element: any) => {
+          service.images.push(element.secure_url);
+        });
+      } catch {
+        return res.status(500).json({
+          ok: false,
+          error: "Error al subir la imagen, el servicio no se guardo.",
+        });
       }
-    )
-  }
+    }
     await service.save();
     console.log("service", service);
     res.json({
@@ -59,7 +63,6 @@ export const editService = {
     const { role, uid, files } = req;
     const { duration, price, description, name, id } = req.body;
     const images: UploadedFile | UploadedFile[] | undefined = req.files?.image;
-    
 
     const targetService = await Service.findById(id);
     console.log("files.image", files?.image);
@@ -71,25 +74,29 @@ export const editService = {
       });
     }
 
-    if(images){
-      const imagesArray: UploadedFile[] = Array.isArray(images) ? images : [images];
-      imagesArray?.forEach(async (element)=> {
-        try {
-          const imageUrl = await cloudinary.uploader.upload(
-            // @ts-ignore
-            element.tempFilePath,
-            { folder: "services" }
-          );
-          targetService.images.push(imageUrl.secure_url)
-        } catch {
-          return res.status(500).json({
-            ok: false,
-            error: "Error al subir la imagen, el servicio no se guardo.",
-          });
-        }
-      }
-    )
+    if (images) {
+      const imagesArray: UploadedFile[] = Array.isArray(images)
+        ? images
+        : [images];
+      const uploadPromises = imagesArray?.map(async (element) => {
+        return await cloudinary.uploader.upload(
+          // @ts-ignore
+          element.tempFilePath,
+          { folder: "services" }
+        );
+      });
 
+      try {
+        const uploadResponses = await Promise.all(uploadPromises);
+        uploadResponses.forEach((element: any) => {
+          targetService.images.push(element.secure_url);
+        });
+      } catch {
+        return res.status(500).json({
+          ok: false,
+          error: "Error al subir la imagen, el servicio no se guardo.",
+        });
+      }
     }
     targetService.name = name;
     targetService.duration = duration;
