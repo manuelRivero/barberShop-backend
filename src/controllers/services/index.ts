@@ -66,9 +66,11 @@ export const editService = {
     const { role, uid, files } = req;
     const { duration, price, description, name, id, imageForDelete } = req.body;
     const images: UploadedFile | UploadedFile[] | undefined = req.files?.image;
-
+    const imagesForDeleteArray = Array.isArray(imageForDelete)
+    ? imageForDelete
+    : [imageForDelete];
     const targetService = await Service.findById(id);
-    console.log("files.image", files?.image);
+    console.log("imageForDelete", imageForDelete);
 
     if (!targetService) {
       return res.status(404).json({
@@ -104,10 +106,10 @@ export const editService = {
         });
       }
     }
-    if (imageForDelete){
-      console.log("imagesForDelete", imageForDelete)
+    if (imagesForDeleteArray){
+      console.log("imagesForDelete", imagesForDeleteArray)
 
-      const deletePromises = imageForDelete?.map( (element: any) => {
+      const deletePromises = imagesForDeleteArray?.map( (element: any) => {
         targetService.images = targetService.images.filter( e => e.publicId !== element)
         return cloudinary.uploader.destroy(element);
         
