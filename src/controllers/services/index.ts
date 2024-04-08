@@ -29,7 +29,7 @@ export const createService = {
 
     if (images) {
       const uploadPromises = imagesArray?.map(async (element) => {
-        return await cloudinary.uploader.upload(
+        return cloudinary.uploader.upload(
           // @ts-ignore
           element.tempFilePath,
           { folder: "services" }
@@ -82,7 +82,7 @@ export const editService = {
         ? images
         : [images];
       const uploadPromises = imagesArray?.map(async (element) => {
-        return await cloudinary.uploader.upload(
+        return cloudinary.uploader.upload(
           // @ts-ignore
           element.tempFilePath,
           { folder: "services" }
@@ -107,8 +107,8 @@ export const editService = {
     if (imagesForDelete){
 
       const deletePromises = imagesForDelete?.map( (element: any) => {
-        targetService.images = targetService.images.filter( e => e.publicId !== element)
-        return cloudinary.uploader.destroy(element);
+        targetService.images = targetService.images.filter( e => e.publicId !== element.publicId)
+        return cloudinary.uploader.destroy(element.publicId);
         
       })
 
