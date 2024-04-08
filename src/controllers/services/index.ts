@@ -105,6 +105,7 @@ export const editService = {
       }
     }
     if (imagesForDelete){
+      console.log("imagesForDelete", imagesForDelete)
 
       const deletePromises = imagesForDelete?.map( (element: any) => {
         targetService.images = targetService.images.filter( e => e.publicId !== element.publicId)
