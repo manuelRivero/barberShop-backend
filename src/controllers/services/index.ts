@@ -106,7 +106,7 @@ export const editService = {
         });
       }
     }
-    if (imagesForDeleteArray){
+    if (imageForDelete){
       console.log("imagesForDelete", imagesForDeleteArray)
 
       const deletePromises = imagesForDeleteArray?.map( (element: any) => {
