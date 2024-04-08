@@ -64,7 +64,7 @@ export const editService = {
   check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (req: Request, res: Response, next: NextFunction) => {
     const { role, uid, files } = req;
-    const { duration, price, description, name, id, imagesForDelete } = req.body;
+    const { duration, price, description, name, id, imageForDelete } = req.body;
     const images: UploadedFile | UploadedFile[] | undefined = req.files?.image;
 
     const targetService = await Service.findById(id);
@@ -104,12 +104,12 @@ export const editService = {
         });
       }
     }
-    if (imagesForDelete){
-      console.log("imagesForDelete", imagesForDelete)
+    if (imageForDelete){
+      console.log("imagesForDelete", imageForDelete)
 
-      const deletePromises = imagesForDelete?.map( (element: any) => {
-        targetService.images = targetService.images.filter( e => e.publicId !== element.publicId)
-        return cloudinary.uploader.destroy(element.publicId);
+      const deletePromises = imageForDelete?.map( (element: any) => {
+        targetService.images = targetService.images.filter( e => e.publicId !== element)
+        return cloudinary.uploader.destroy(element);
         
       })
 
