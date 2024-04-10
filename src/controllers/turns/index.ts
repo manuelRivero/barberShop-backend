@@ -222,6 +222,14 @@ export const getActiveTurn = {
           }
 
         }
+      },
+      {
+        $lookup: {
+          from: "services",
+          localField: "type",
+          foreignField: "_id",
+          as: "serviceData"
+        }
       }
     ])
     res.json(turn)
