@@ -184,6 +184,14 @@ export const getTurnDetail = {
             as: "barberData",
           },
         },
+        {
+          $lookup: {
+            from: "services",
+            localField: "type",
+            foreignField: "_id",
+            as: "serviceData"
+          }
+        }
       ]);
 
       console.log("turn detail", turn);
