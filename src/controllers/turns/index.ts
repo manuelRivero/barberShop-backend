@@ -123,7 +123,8 @@ export const getTurns = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-    const day = moment.tz('America/Argentina/Buenos_Aires').get("date");
+    const {date} = req.body
+    const day = date ? moment(date).get("date") : moment.tz('America/Argentina/Buenos_Aires').get("date");
     console.log("day", day)
     try {
       const turns = await Turn.aggregate([
