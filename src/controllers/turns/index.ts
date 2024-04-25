@@ -123,7 +123,7 @@ export const getTurns = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-    const {date} = req.body
+    const {date} = req.query
     const day = date ? moment(date).get("date") : moment.tz('America/Argentina/Buenos_Aires').get("date");
     console.log("day", day)
     try {
