@@ -28,12 +28,14 @@ export const setTurns = {
     const targetTurn = await Turn.aggregate([
       {
         $match: {
+          status: { $ne: "CANCELED"},
           $or: [
             {
               startDate: { $gte: new Date(startDate), $lte: new Date(endDate) },
             },
             { endDate: { $gte: new Date(startDate), $lte: new Date(endDate) } },
           ],
+
         },
       },
     ]);
