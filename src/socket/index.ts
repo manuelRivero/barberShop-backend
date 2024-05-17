@@ -46,11 +46,12 @@ export const socketHandler = (server: Server): SocketIOServer => {
 
     socket.on(
       "canceled-turn",
-      async (data: { barber: SocketUser; turnData: any }) => {
-        const targetBarber = await findTargetUser(data.barber._id, redisClient);
-        if (targetBarber) {
-          io.to(targetBarber.socketId).emit("cancel-turn", {
-            data: data.turnData,
+      async (data: { id: string }) => {
+        console.log("socket de cancelacion", data);
+        const targetUser = await findTargetUser(data.id, redisClient);
+        if (targetUser) {
+          io.to(targetUser.socketId).emit("cancel-turn", {
+            data: data.id,
           });
         }
       }
