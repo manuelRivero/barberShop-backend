@@ -28,7 +28,6 @@ export const setTurns = {
     const targetTurn = await Turn.aggregate([
       {
         $match: {
-          status: { $ne: "CANCELED"},
           $or: [
             {
               startDate: { $gte: new Date(startDate), $lte: new Date(endDate) },
@@ -39,8 +38,8 @@ export const setTurns = {
         },
       },
     ]);
-    console.log("set turn, target turn", targetTurn);
-    if (targetTurn.length > 0) {
+    
+    if (targetTurn.length > 0 && targetTurn[0].status !== "CANCELED") {
       res.status(400).json({
         ok: false,
         error: "Hora del turno ya agendada",
