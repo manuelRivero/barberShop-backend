@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import Turn from "../../models/turns";
 import mongoose from "mongoose";
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 import User from "../../models/user";
 
 export const setTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => { },
+  check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (
     req: Request,
     res: Response,
@@ -14,17 +14,16 @@ export const setTurns = {
     const { role, uid } = req;
     const { startDate, endDate, type, barber, price, name } = req.body;
     // check barber availability
-    const targetBarber = await User.findById(barber)
+    const targetBarber = await User.findById(barber);
 
-    if (!targetBarber){
-      res.status(404).json({ok:false, error: "Barbero no encontrado"})
+    if (!targetBarber) {
+      res.status(404).json({ ok: false, error: "Barbero no encontrado" });
     }
-    if(targetBarber && !targetBarber.isActive){
-      res.status(404).json({ok:false, error: "Barbero no disponible"})
-
+    if (targetBarber && !targetBarber.isActive) {
+      res.status(404).json({ ok: false, error: "Barbero no disponible" });
     }
-      // check turn availability
-      console.log("dates set turn");
+    // check turn availability
+    console.log("dates set turn");
     const targetTurn = await Turn.aggregate([
       {
         $match: {
@@ -34,11 +33,10 @@ export const setTurns = {
             },
             { endDate: { $gte: new Date(startDate), $lte: new Date(endDate) } },
           ],
-
         },
       },
     ]);
-    
+
     if (targetTurn.length > 0 && targetTurn[0].status !== "CANCELED") {
       res.status(400).json({
         ok: false,
@@ -73,7 +71,7 @@ export const setTurns = {
 };
 
 export const completeTurn = {
-  check: async (req: Request, res: Response, next: NextFunction) => { },
+  check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (
     req: Request,
     res: Response,
@@ -81,21 +79,20 @@ export const completeTurn = {
   ): Promise<void> => {
     const { id } = req.body;
 
-    const targetTurn = await Turn.findById(id)
+    const targetTurn = await Turn.findById(id);
 
     if (!targetTurn) {
-      res.json({ ok: false, error: "Turno no encontrado" })
+      res.json({ ok: false, error: "Turno no encontrado" });
     } else {
-      targetTurn.status = "COMPLETE"
-      await targetTurn?.save()
-      res.json({ ok: true })
+      targetTurn.status = "COMPLETE";
+      await targetTurn?.save();
+      res.json({ ok: true });
     }
-
-  }
-}
+  },
+};
 
 export const cancelTurn = {
-  check: async (req: Request, res: Response, next: NextFunction) => { },
+  check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (
     req: Request,
     res: Response,
@@ -103,54 +100,50 @@ export const cancelTurn = {
   ): Promise<void> => {
     const { id } = req.body;
 
-    const targetTurn = await Turn.findById(id)
+    const targetTurn = await Turn.findById(id);
 
     if (!targetTurn) {
-      res.json({ ok: false, error: "Turno no encontrado" })
+      res.json({ ok: false, error: "Turno no encontrado" });
     } else {
-      targetTurn.status = "CANCELED"
-      await targetTurn?.save()
-      res.json({ ok: true })
+      targetTurn.status = "CANCELED";
+      await targetTurn?.save();
+      res.json({ ok: true });
     }
-
-  }
-}
-// set $lte params to bussinessHourEnd 
+  },
+};
+// set $lte params to bussinessHourEnd
 export const getTurns = {
-  check: async (req: Request, res: Response, next: NextFunction) => { },
+  check: async (req: Request, res: Response, next: NextFunction) => {},
   do: async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.params;
-    const {date} = req.query
-    const day = date ? moment(date as string).get("date") : moment.tz('America/Argentina/Buenos_Aires').get("date");
-    console.log("day", day)
+    const { date } = req.query;
+    const day = date
+      ? moment(date as string).get("date")
+      : moment.tz("America/Argentina/Buenos_Aires").get("date");
+    console.log("day", day);
     try {
       const turns = await Turn.aggregate([
         {
           $match: {
             barber: new mongoose.Types.ObjectId(id),
             startDate: {
-              $gte: moment()
-                .set({ dates: day, hour: 0, minutes: 0 })
-                .toDate(),
-              $lte: moment()
-                .set({ dates: day, hour: 23, minutes: 0 })
-                .toDate(),
+              $gte: moment().set({ dates: day, hour: 0, minutes: 0 }).toDate(),
+              $lte: moment().set({ dates: day, hour: 23, minutes: 0 }).toDate(),
             },
           },
-
         },
         {
           $lookup: {
             from: "users",
             localField: "user",
             foreignField: "_id",
-            as: "user"
-          }
-        }
+            as: "user",
+          },
+        },
       ]);
       console.log("turns", turns);
       res.status(200).json({
@@ -191,9 +184,9 @@ export const getTurnDetail = {
             from: "services",
             localField: "type",
             foreignField: "_id",
-            as: "serviceData"
-          }
-        }
+            as: "serviceData",
+          },
+        },
       ]);
 
       console.log("turn detail", turn);
@@ -215,33 +208,51 @@ export const getTurnDetail = {
 // agregar hora de cierre del local
 export const getActiveTurn = {
   do: async (req: Request, res: Response): Promise<void> => {
-    const { uid } = req
-    
+    const { uid } = req;
+
     const turn = await Turn.aggregate([
       {
         $match: {
-          status:{$ne: "CANCELED"},
+          status: { $ne: "CANCELED" },
           user: new mongoose.Types.ObjectId(uid),
           endDate: {
-            $gte: moment.tz('America/Argentina/Buenos_Aires')
+            $gte: moment
+              .tz("America/Argentina/Buenos_Aires")
               .set({ hour: 0, minutes: 0 })
               .toDate(),
-            $lt: moment.tz('America/Argentina/Buenos_Aires')
+            $lt: moment
+              .tz("America/Argentina/Buenos_Aires")
               .set({ hour: 23, minutes: 59 })
               .toDate(),
-          }
-
-        }
+          },
+        },
       },
       {
         $lookup: {
           from: "services",
           localField: "type",
           foreignField: "_id",
-          as: "serviceData"
-        }
-      }
-    ])
-    res.json(turn)
-  }
-}
+          as: "serviceData",
+        },
+      },
+    ]);
+    res.json(turn);
+  },
+};
+
+export const cancelTurnUser = {
+  do: async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const targetTurn = await Turn.findById(id);
+    if (!targetTurn) {
+      res.status(400).json({ ok: false, message: "Turno no encontrado" });
+    } else {
+      targetTurn.status = "CANCELED-BY-USER";
+      await targetTurn.save();
+
+      res.json({
+        ok: true,
+      });
+    }
+  },
+};
