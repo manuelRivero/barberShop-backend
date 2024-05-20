@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { cancelTurn, completeTurn, getActiveTurn, getTurnDetail, getTurns, setTurns } from "../../controllers/turns/index";
+import { cancelTurn, cancelTurnUser, completeTurn, getActiveTurn, getTurnDetail, getTurns, setTurns } from "../../controllers/turns/index";
 import { validateJWT } from "../../middleware/validateJWT/index";
 
 
@@ -13,6 +13,8 @@ router.put('/complete', validateJWT, completeTurn.do)
 router.put('/canceled', validateJWT, cancelTurn.do)
 router.get('/get/:id', validateJWT, getTurns.do)
 router.get('/detail/:id', validateJWT, getTurnDetail.do)
+router.delete("/:id", validateJWT, cancelTurnUser.do);
+
 
 // router.get('/me',validateJWT, me.do)
 
