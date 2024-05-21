@@ -26,11 +26,12 @@ export const socketHandler = (server: Server): SocketIOServer => {
   io.on("connection", async (socket: Socket): Promise<void> => {
     socket.on(
       "set-turn",
-      async (data: { barber: SocketUser; turnData: any }) => {
+      async (data: { barber: SocketUser; turnData: any, userData:any }) => {
         const targetBarber = await findTargetUser(data.barber._id, redisClient);
         if (targetBarber) {
           io.to(targetBarber.socketId).emit("add-turn", {
             data: data.turnData,
+            user: data.userData
           });
         }
       }
