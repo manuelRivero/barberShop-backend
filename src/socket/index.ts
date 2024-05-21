@@ -67,7 +67,17 @@ export const socketHandler = (server: Server): SocketIOServer => {
         }
       }
     );
+    socket.on(
+      "phone-request",
+      async (data: { id: string }) => {
+        const targetUser = await findTargetUser(data.id, redisClient);
+        if (targetUser) {
+          io.to(targetUser.socketId).emit("phone-requested");
+        }
+      }
+    );
   });
+
 
   io.on("disconnect", async () => {
     await redisClient.quit();
