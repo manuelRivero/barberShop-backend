@@ -55,6 +55,10 @@ export const socketHandler = (server: Server): SocketIOServer => {
       }
     });
 
+    socket.on("phone-changed", async (data: { turnData: any }) => {
+      console.log("socket de cambio de telefono", data);
+    });
+
     socket.on(
       "cancelation",
       async (data: { id: string; turnId: string; date: string; user: any }) => {
