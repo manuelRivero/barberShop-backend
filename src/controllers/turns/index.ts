@@ -22,10 +22,7 @@ export const setTurns = {
     if (targetBarber && !targetBarber.isActive) {
       res.status(404).json({ ok: false, error: "Barbero no disponible" });
     }
-    // check turn availability
-    console.log("dates set turn");
-    console.log("Dates:", new Date(endDate), new Date(endDate));
-    
+    // check turn availability    
     const targetTurn = await Turn.aggregate([
       {
         $match: {
@@ -39,7 +36,7 @@ export const setTurns = {
       },
     ]);
 
-    if (targetTurn.length > 0 && targetTurn[0].status !== "CANCELED") {
+    if (targetTurn.length > 0 && targetTurn[0].status !== "CANCELED" && targetTurn[0].status !== "CANCELED-BY-USER") {
       res.status(400).json({
         ok: false,
         error: "Hora del turno ya agendada",
