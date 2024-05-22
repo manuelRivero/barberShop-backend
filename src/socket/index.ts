@@ -57,6 +57,12 @@ export const socketHandler = (server: Server): SocketIOServer => {
 
     socket.on("phone-changed", async (data: { turnData: any }) => {
       console.log("socket de cambio de telefono", data);
+      const targetUser = await findTargetUser(data.turnData.barber, redisClient);
+      if (targetUser) {
+        io.to(targetUser.socketId).emit("phone-changed-notification", {
+          data: data.turnData,
+        });
+      }
     });
 
     socket.on(
