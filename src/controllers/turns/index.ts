@@ -24,6 +24,8 @@ export const setTurns = {
     }
     // check turn availability
     console.log("dates set turn");
+    console.log("Dates:", new Date(endDate), new Date(endDate));
+    
     const targetTurn = await Turn.aggregate([
       {
         $match: {
