@@ -26,12 +26,12 @@ export const socketHandler = (server: Server): SocketIOServer => {
   io.on("connection", async (socket: Socket): Promise<void> => {
     socket.on(
       "set-turn",
-      async (data: { barber: SocketUser; turnData: any, userData:any }) => {
+      async (data: { barber: SocketUser; turnData: any; userData: any }) => {
         const targetBarber = await findTargetUser(data.barber._id, redisClient);
         if (targetBarber) {
           io.to(targetBarber.socketId).emit("add-turn", {
             data: data.turnData,
-            user: data.userData
+            user: data.userData,
           });
         }
       }
@@ -55,17 +55,24 @@ export const socketHandler = (server: Server): SocketIOServer => {
       }
     });
 
-    socket.on("phone-changed-by-user", async (data: { turnData: any }) => {
-      console.log("socket de cambio de telefono", data);
-      const targetUser = await findTargetUser(data.turnData.barber, redisClient);
-      console.log("targetUser", targetUser, data.turnData.barber);
-      if (targetUser) {
-        console.log("envio de notificacion");
-        io.to(targetUser.socketId).emit("phone-changed", {
-          data: data.turnData,
-        });
+    socket.on(
+      "phone-changed-by-user",
+      async (data: { turnId: string; barber: string; phone: string }) => {
+        console.log("socket de cambio de telefono", data);
+        const targetUser = await findTargetUser(
+          data.barber,
+          redisClient
+        );
+        console.log("targetUser", targetUser, data.barber);
+        if (targetUser) {
+          console.log("envio de notificacion");
+          io.to(targetUser.socketId).emit("phone-changed", {
+            turnId: data.turnId,
+            phone: data.phone
+          });
+        }
       }
-    });
+    );
 
     socket.on(
       "cancelation",
@@ -79,17 +86,13 @@ export const socketHandler = (server: Server): SocketIOServer => {
         }
       }
     );
-    socket.on(
-      "phone-request",
-      async (data: { id: string }) => {
-        const targetUser = await findTargetUser(data.id, redisClient);
-        if (targetUser) {
-          io.to(targetUser.socketId).emit("phone-requested");
-        }
+    socket.on("phone-request", async (data: { id: string }) => {
+      const targetUser = await findTargetUser(data.id, redisClient);
+      if (targetUser) {
+        io.to(targetUser.socketId).emit("phone-requested");
       }
-    );
+    });
   });
-
 
   io.on("disconnect", async () => {
     await redisClient.quit();
