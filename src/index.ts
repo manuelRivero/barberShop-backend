@@ -13,6 +13,7 @@ import barbersRoutes from "./routes/barbers/index";
 import statsRoutes from "./routes/stats/index";
 import reviewsRoutes from "./routes/reviews/index";
 import galleryRoutes from "./routes/gallery/index";
+import settingsRoutes from "./routes/settings/index";
 
 import { errorHandler } from "./middleware/errorHandler/error-handler";
 import cookieParser from "cookie-parser";
@@ -46,6 +47,7 @@ app.use("/api/barbers", barbersRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/settings", settingsRoutes);
 
 app.use(errorHandler);
 
