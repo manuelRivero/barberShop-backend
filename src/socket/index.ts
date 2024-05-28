@@ -45,12 +45,13 @@ export const socketHandler = (server: Server): SocketIOServer => {
       handleLogout(data.user, redisClient);
     });
 
-    socket.on("canceled-turn", async (data: { id: string }) => {
+    socket.on("canceled-turn", async (data: { id: string, reason:string }) => {
       console.log("socket de cancelacion", data);
       const targetUser = await findTargetUser(data.id, redisClient);
       if (targetUser) {
         io.to(targetUser.socketId).emit("cancel-turn", {
-          data: data.id,
+          id: data.id,
+          reason: data.reason
         });
       }
     });
@@ -76,12 +77,12 @@ export const socketHandler = (server: Server): SocketIOServer => {
 
     socket.on(
       "cancelation",
-      async (data: { id: string; turnId: string; date: string; user: any }) => {
+      async (data: { id: string; turnId: string; date: string; user: any; reason:string }) => {
         console.log("socket de cancelacion por el usuario", data);
         const targetUser = await findTargetUser(data.id, redisClient);
         if (targetUser) {
           io.to(targetUser.socketId).emit("cancel-by-user", {
-            data: { turnId: data.turnId, date: data.date, user: data.user },
+            data: { turnId: data.turnId, date: data.date, user: data.user, reason:data.reason },
           });
         }
       }

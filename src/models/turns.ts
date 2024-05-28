@@ -21,6 +21,10 @@ const Turn = new Schema(
       type: String,
       default: "INCOMPLETE",
     },
+    cancelReason:{
+      type: String,
+      default: null
+    }
   },
   {
     collection: "turns",

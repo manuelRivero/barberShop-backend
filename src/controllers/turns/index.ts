@@ -238,11 +238,13 @@ export const getActiveTurn = {
 export const cancelTurnUser = {
   do: async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+    const {reason} = req.body;
     const targetTurn = await Turn.findById(id);
     if (!targetTurn) {
       res.status(400).json({ ok: false, message: "Turno no encontrado" });
     } else {
       targetTurn.status = "CANCELED-BY-USER";
+      targetTurn.cancelReason = reason;
       await targetTurn.save();
 
       res.json({
