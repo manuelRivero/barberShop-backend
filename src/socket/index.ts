@@ -45,12 +45,12 @@ export const socketHandler = (server: Server): SocketIOServer => {
       handleLogout(data.user, redisClient);
     });
 
-    socket.on("canceled-turn", async (data: { id: string, reason:string }) => {
+    socket.on("canceled-turn", async (data: { id: string, reason:string, turnId:string }) => {
       console.log("socket de cancelacion", data);
       const targetUser = await findTargetUser(data.id, redisClient);
       if (targetUser) {
         io.to(targetUser.socketId).emit("cancel-turn", {
-          id: data.id,
+          id: data.turnId,
           reason: data.reason
         });
       }
