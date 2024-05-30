@@ -99,6 +99,8 @@ export const cancelTurn = {
   ): Promise<void> => {
     const { id } = req.body;
     const {reason} = req.body;
+    console.log("Cancel turn req.body", req.body);
+    
 
     const targetTurn = await Turn.findById(id);
 
