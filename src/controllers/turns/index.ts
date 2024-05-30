@@ -98,6 +98,7 @@ export const cancelTurn = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.body;
+    const {reason} = req.body;
 
     const targetTurn = await Turn.findById(id);
 
@@ -105,6 +106,7 @@ export const cancelTurn = {
       res.json({ ok: false, error: "Turno no encontrado" });
     } else {
       targetTurn.status = "CANCELED";
+      targetTurn.cancelReason = reason;
       await targetTurn?.save();
       res.json({ ok: true });
     }
