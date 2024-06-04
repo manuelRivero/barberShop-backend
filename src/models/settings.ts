@@ -6,6 +6,7 @@ const Settings= new Schema(
     businessHourEnd: {type:String},
     businessOffset: {type:String},
     businessPhone: {type:String},
+    countryCode: {type:String},
 },
     
   {
