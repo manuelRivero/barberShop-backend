@@ -3,7 +3,7 @@ import Settings from "../../models/settings";
 
 export const setBusinessSchedule = {
   do: async (req: Request, res: Response) => {
-    const { hourEnd, hourStart } = req.body;
+    const { hourEnd, hourStart, offset } = req.body;
 
     try {
       const count = await Settings.countDocuments();
@@ -28,8 +28,9 @@ export const setBusinessSchedule = {
       if (count === 1) {
         try {
           const [settings] = await Settings.find();
-          (settings.businessHourStart = hourStart),
-            (settings.businessHourEnd = hourEnd),
+          settings.businessHourStart = hourStart;
+          settings.businessHourEnd = hourEnd;
+          settings.businessOffset = offset;
             await settings.save();
         } catch (error) {
           res
@@ -44,3 +45,17 @@ export const setBusinessSchedule = {
     }
   },
 };
+
+export const getBusinessSchedule = {
+  do: async (req: Request, res: Response) => {
+    console.log("getBusinessSchedule controller");
+
+    const [settings] = await Settings.find()
+    res.json({
+      ok: true,
+      settings,
+    });
+  },
+};
+
+

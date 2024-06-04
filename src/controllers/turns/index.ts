@@ -98,9 +98,7 @@ export const cancelTurn = {
     next: NextFunction
   ): Promise<void> => {
     const { id } = req.body;
-    const {reason} = req.body;
-    console.log("Cancel turn req.body", req.body);
-    
+    const {reason} = req.body;    
 
     const targetTurn = await Turn.findById(id);
 

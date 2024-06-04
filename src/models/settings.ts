@@ -3,7 +3,8 @@ import { Schema, model } from "mongoose";
 const Settings= new Schema(
   {
     businessHourStart: {type: String},
-    businessHourEnd:{type:String},
+    businessHourEnd: {type:String},
+    businessOffset: {type:String}
 },
     
   {
