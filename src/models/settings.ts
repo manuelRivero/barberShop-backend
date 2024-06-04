@@ -4,7 +4,8 @@ const Settings= new Schema(
   {
     businessHourStart: {type: String},
     businessHourEnd: {type:String},
-    businessOffset: {type:String}
+    businessOffset: {type:String},
+    businessPhone: {type:String},
 },
     
   {
