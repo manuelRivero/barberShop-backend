@@ -18,7 +18,7 @@ export const setBusinessSchedule = {
             businessHourEnd: hourEnd,
             businessOffset: offset,
             businessPhone: phone,
-            countryCode:code,
+            countryCode: code,
             businessCountry: country,
           });
           await settings.save();
@@ -38,8 +38,8 @@ export const setBusinessSchedule = {
           settings.businessPhone = phone;
           settings.countryCode = code;
           settings.businessCountry = country;
-            await settings.save();
-            res.json({ ok: true, settings });
+          await settings.save();
+          res.json({ ok: true, settings });
         } catch (error) {
           res
             .status(400)
@@ -56,14 +56,24 @@ export const setBusinessSchedule = {
 
 export const getBusinessSchedule = {
   do: async (req: Request, res: Response) => {
-    console.log("getBusinessSchedule controller");
-
-    const [settings] = await Settings.find()
-    res.json({
-      ok: true,
-      settings,
-    });
+    const settings = await Settings.find();
+    if (settings.length > 0) {
+      res.json({
+        ok: true,
+        settings: settings[0],
+      });
+    } else {
+      res.status(400).json({
+        ok: false,
+        settings: {
+          businessHourStart: null,
+          businessHourEnd: null,
+          businessOffset: null,
+          businessPhone: null,
+          countryCode: null,
+          businessCountry: null,
+        },
+      });
+    }
   },
 };
-
-
