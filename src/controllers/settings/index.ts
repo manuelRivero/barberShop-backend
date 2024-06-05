@@ -3,7 +3,7 @@ import Settings from "../../models/settings";
 
 export const setBusinessSchedule = {
   do: async (req: Request, res: Response) => {
-    const { hourEnd, hourStart, offset, phone, code } = req.body;
+    const { hourEnd, hourStart, offset, phone, code, country } = req.body;
 
     try {
       const count = await Settings.countDocuments();
@@ -16,6 +16,10 @@ export const setBusinessSchedule = {
           const settings = new Settings({
             businessHourStart: hourStart,
             businessHourEnd: hourEnd,
+            businessOffset: offset,
+            businessPhone: phone,
+            countryCode:code,
+            businessCountry: country,
           });
           await settings.save();
           res.json({ ok: true });
@@ -33,6 +37,7 @@ export const setBusinessSchedule = {
           settings.businessOffset = offset;
           settings.businessPhone = phone;
           settings.countryCode = code;
+          settings.businessCountry = country;
             await settings.save();
         } catch (error) {
           res
