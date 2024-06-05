@@ -63,8 +63,8 @@ export const getBusinessSchedule = {
         settings: settings[0],
       });
     } else {
-      res.status(400).json({
-        ok: false,
+      res.json({
+        ok: true,
         settings: {
           businessHourStart: null,
           businessHourEnd: null,
