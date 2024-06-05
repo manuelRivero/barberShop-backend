@@ -22,7 +22,7 @@ export const setBusinessSchedule = {
             businessCountry: country,
           });
           await settings.save();
-          res.json({ ok: true });
+          res.json({ ok: true, settings });
         } catch (error) {
           res
             .status(400)
@@ -39,7 +39,7 @@ export const setBusinessSchedule = {
           settings.countryCode = code;
           settings.businessCountry = country;
             await settings.save();
-            res.json({ ok: true });
+            res.json({ ok: true, settings });
         } catch (error) {
           res
             .status(400)
