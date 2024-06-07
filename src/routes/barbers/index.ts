@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { disableBarber, getBarberDetail, getBarbers } from "../../controllers/barbers/index";
+import { createBarber, disableBarber, getBarberDetail, getBarbers } from "../../controllers/barbers/index";
 import { validateJWT } from "../../middleware/validateJWT/index";
 
 const router = Router();
@@ -10,5 +10,7 @@ router.get("/", validateJWT, getBarbers.do);
 router.get("/:id", validateJWT, getBarberDetail)
 
 router.post("/disable", validateJWT, disableBarber)
+
+router.post("/create", validateJWT, createBarber)
 
 export default router;
