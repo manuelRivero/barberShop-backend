@@ -4,6 +4,7 @@ import user from "../../models/user";
 import mongoose, { set } from "mongoose";
 import { io } from "../..";
 import { redisClient } from "../../socket";
+import bcript from "bcryptjs";
 
 export const getBarbers = {
   do: async (req: Request, res: Response) => {
@@ -102,6 +103,9 @@ export const createBarber = async (req: Request, res: Response) => {
     role: "barber",
     isActive: true
   });
+
+  const salt = bcript.genSaltSync();
+  barber.password = bcript.hashSync(password, salt);
 
   await barber.save();
   console.log("barber", barber);
