@@ -102,7 +102,7 @@ export const createBarber = async (req: Request, res: Response) => {
     password,
     commission,
     role: "barber",
-    isActive: true
+    isActive: true,
   });
 
   const salt = bcript.genSaltSync();
@@ -114,4 +114,34 @@ export const createBarber = async (req: Request, res: Response) => {
     ok: true,
     barber,
   });
+};
+
+export const editBarber = async (req: Request, res: Response) => {
+  const { id, name, lastname, email, password, commission } = req.body;
+  const targetBarber = await user.findById(id);
+
+  if (!targetBarber) {
+    return res.status(404).json({
+      ok: false,
+      error: "No se encontró el barbero",
+    });
+  }
+
+  targetBarber.name = name;
+  targetBarber.lastname = lastname;
+  targetBarber.email = email;
+  targetBarber.password = password;
+  targetBarber.commission = commission;
+
+  try {
+    await targetBarber.save();
+    console.log("barber", targetBarber);
+    return res.json({
+      ok: true,
+      targetBarber,
+    });
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ ok: false });
+  }
 };
