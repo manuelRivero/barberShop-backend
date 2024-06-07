@@ -94,12 +94,13 @@ export const disableBarber = async (req: Request, res: Response) => {
 };
 
 export const createBarber = async (req: Request, res: Response) => {
-  const { name, lastname, email, password } = req.body;
+  const { name, lastname, email, password, commission } = req.body;
   const barber = new user({
     name,
     lastname,
     email,
     password,
+    commission,
     role: "barber",
     isActive: true
   });
